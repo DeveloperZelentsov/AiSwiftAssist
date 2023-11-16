@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "AISwiftAssist",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v13),
         .watchOS(.v8)
     ],
     products: [

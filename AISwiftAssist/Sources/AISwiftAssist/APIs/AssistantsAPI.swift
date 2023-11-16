@@ -38,7 +38,7 @@ public protocol IAssistantsAPI: AnyObject {
     func delete(by assistantId: String) async throws -> ASADeleteModelResponse
 }
 
-final class AssistantsAPI: HTTPClient, IAssistantsAPI {
+public final class AssistantsAPI: HTTPClient, IAssistantsAPI {
 
     let urlSession: URLSession
 
@@ -58,7 +58,7 @@ final class AssistantsAPI: HTTPClient, IAssistantsAPI {
         self.urlSession = urlSession
     }
 
-    func get(with parameters: ASAListAssistantsParameters? = nil) async throws -> [ASAAssistant] {
+    public func get(with parameters: ASAListAssistantsParameters? = nil) async throws -> [ASAAssistant] {
         let endpoint = AssistantEndpoint.getAssistants(parameters)
         return try await sendRequest(endpoint: endpoint, responseModel: [ASAAssistant].self)
     }

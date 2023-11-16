@@ -9,6 +9,7 @@ import Foundation
 
 /// Describes an OpenAI model offering that can be used with the API. [Link for Models](https://platform.openai.com/docs/api-reference/models)
 public protocol IModelsAPI: AnyObject {
+    
     /// Lists the currently available models, and provides basic information about each one such as the owner and availability.
     /// - Returns: A list of model objects.
     func get() async throws -> [ASAModel]
@@ -24,7 +25,7 @@ public protocol IModelsAPI: AnyObject {
     func delete(by modelId: String) async throws -> ASADeleteModelResponse
 }
 
-final class ModelsAPI: HTTPClient, IModelsAPI {
+public final class ModelsAPI: HTTPClient, IModelsAPI {
 
     let urlSession: URLSession
 

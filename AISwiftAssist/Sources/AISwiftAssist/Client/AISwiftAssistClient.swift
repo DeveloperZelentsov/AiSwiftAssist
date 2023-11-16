@@ -15,11 +15,12 @@ public final class AISwiftAssistClient {
     public let runsApi: IRunsAPI
     public let threadsApi: IThreadsAPI
 
-    public init(apiKey: String,
+    public init(config: AISwiftAssistConfig,
                 baseScheme: String = Constants.baseScheme,
                 baseHost: String = Constants.baseHost,
                 path: String = Constants.path) {
-        Constants.apiKey = apiKey
+        Constants.apiKey = config.apiKey
+        Constants.organizationId = config.organizationId
         Constants.baseScheme = baseScheme
         Constants.baseHost = baseHost
         Constants.path = path
@@ -29,7 +30,4 @@ public final class AISwiftAssistClient {
         self.runsApi = RunsAPI(urlSession: .shared)
         self.threadsApi = ThreadsAPI(urlSession: .shared)
     }
-
-
-
 }

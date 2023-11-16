@@ -33,7 +33,7 @@ public protocol IThreadsAPI: AnyObject {
     func delete(threadId: String) async throws -> ASADeleteModelResponse
 }
 
-final class ThreadsAPI: HTTPClient, IThreadsAPI {
+public final class ThreadsAPI: HTTPClient, IThreadsAPI {
     
     let urlSession: URLSession
 

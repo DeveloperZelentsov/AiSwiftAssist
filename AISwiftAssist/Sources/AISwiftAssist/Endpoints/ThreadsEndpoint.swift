@@ -50,7 +50,7 @@ extension ThreadsEndpoint: CustomEndpoint {
     }
 
     public var header: [String : String]? {
-        var headers: [String: String] = ["OpenAI-Beta": "assistants=v1",
+        let headers: [String: String] = ["OpenAI-Beta": "assistants=v1",
                                          "Content-Type": "application/json"]
         return headers
     }

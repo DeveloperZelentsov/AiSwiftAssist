@@ -12,4 +12,5 @@ public enum Constants {
     public static var baseHost: String = "api.openai.com"
     public static var path: String = "/v1/"
     public static var apiKey: String = ""
+    public static var organizationId: String?
 }

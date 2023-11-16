@@ -33,8 +33,10 @@ extension MessagesEndpoint: CustomEndpoint {
 
     public var path: String {
         switch self {
-        case .createMessage(let threadId, _): return "threads/\(threadId)/messages"
-        case .retrieveMessage(let threadId, let messageId): return "threads/\(threadId)/messages/\(messageId)"
+        case .createMessage(let threadId, _): 
+            return "threads/\(threadId)/messages"
+        case .retrieveMessage(let threadId, let messageId):
+            return "threads/\(threadId)/messages/\(messageId)"
         case .modifyMessage(let threadId, let messageId, _):
             return "threads/\(threadId)/messages/\(messageId)"
         case .listMessages(let threadId, _):
@@ -52,7 +54,7 @@ extension MessagesEndpoint: CustomEndpoint {
     }
 
     public var header: [String : String]? {
-        var headers: [String: String] = ["OpenAI-Beta": "assistants=v1",
+        let headers: [String: String] = ["OpenAI-Beta": "assistants=v1",
                                          "Content-Type": "application/json"]
         return headers
     }
