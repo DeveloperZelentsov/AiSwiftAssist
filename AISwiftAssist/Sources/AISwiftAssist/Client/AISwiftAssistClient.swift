@@ -35,7 +35,7 @@ public final class AISwiftAssistClient {
 
 extension AISwiftAssistClient {
     /// Creates an assistant and thread based on the provided parameters.
-    func createAssistantAndThread(with params: AssistantCreationParams) async throws -> AssistantAndThreadConfig {
+    public func createAssistantAndThread(with params: AssistantCreationParams) async throws -> AssistantAndThreadConfig {
         let modelsResponse = try await modelsApi.get()
         guard let model = modelsResponse.data.first(where: { $0.id == params.modelName }) else {
             throw NSError(domain: "AISwiftAssistClient", code: 0, userInfo: [NSLocalizedDescriptionKey: "Model not found"])
