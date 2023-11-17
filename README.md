@@ -2,6 +2,8 @@
 
 A Swift Package Manager (SPM) library for iOS 13 and above, designed to simplify the integration with OpenAI's Assistants API in iOS applications. This library allows you to build AI-powered assistants efficiently and interactively.
 
+[![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/zelentsov)
+
 ## Features
 
 - Seamless integration with OpenAI's Assistants API.
