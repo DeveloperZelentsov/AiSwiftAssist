@@ -9,6 +9,7 @@ import Foundation
 
 /// A request structure for creating a run in a thread.
 public struct ASACreateRunRequest: Codable {
+    
     /// The ID of the assistant to use to execute this run.
     public let assistantId: String
 
@@ -56,5 +57,13 @@ public struct ASACreateRunRequest: Codable {
     enum CodingKeys: String, CodingKey {
         case assistantId = "assistant_id"
         case model, instructions, tools, metadata
+    }
+
+    public init(assistantId: String, model: String? = nil, instructions: String? = nil, tools: [ASACreateRunRequest.Tool]? = nil, metadata: [String : String]? = nil) {
+        self.assistantId = assistantId
+        self.model = model
+        self.instructions = instructions
+        self.tools = tools
+        self.metadata = metadata
     }
 }

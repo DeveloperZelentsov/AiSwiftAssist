@@ -38,7 +38,7 @@ public struct ASACreateAssistantRequest: Codable {
         case metadata
     }
 
-    public init(model: String, name: String?, description: String?, instructions: String?, tools: [Tool]?, fileIds: [String]?, metadata: [String : String]?) {
+    public init(model: String, name: String? = nil, description: String? = nil, instructions: String? = nil, tools: [Tool]? = nil, fileIds: [String]? = nil, metadata: [String : String]? = nil) {
         self.model = model
         self.name = name
         self.description = description
@@ -48,7 +48,7 @@ public struct ASACreateAssistantRequest: Codable {
         self.metadata = metadata
     }
 
-    public init(asaModel: ASAModel, name: String?, description: String?, instructions: String?, tools: [Tool]?, fileIds: [String]?, metadata: [String : String]?) {
+    public init(asaModel: ASAModel, name: String? = nil, description: String? = nil, instructions: String? = nil, tools: [Tool]? = nil, fileIds: [String]? = nil, metadata: [String : String]? = nil) {
         self.model = asaModel.id
         self.name = name
         self.description = description

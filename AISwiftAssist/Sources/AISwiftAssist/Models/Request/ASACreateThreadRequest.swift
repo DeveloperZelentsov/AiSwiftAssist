@@ -31,4 +31,8 @@ public struct ASACreateThreadRequest: Codable {
             case metadata
         }
     }
+
+    public init(messages: [Message]? = nil) {
+        self.messages = messages
+    }
 }

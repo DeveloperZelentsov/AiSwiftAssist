@@ -8,7 +8,7 @@
 import Foundation
 
 enum ThreadsEndpoint {
-    case createThread(ASACreateThreadRequest)
+    case createThread(ASACreateThreadRequest?)
     case retrieveThread(String)
     case modifyThread(String, ASAModifyThreadRequest)
     case deleteThread(String)
@@ -61,9 +61,6 @@ extension ThreadsEndpoint: CustomEndpoint {
         case .retrieveThread: return nil
         case .modifyThread(_, let request): return .init(object: request)
         case .deleteThread: return nil
-
-        
-
         }
     }
 }

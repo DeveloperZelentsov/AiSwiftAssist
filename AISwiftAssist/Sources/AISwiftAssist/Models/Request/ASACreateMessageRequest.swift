@@ -9,6 +9,7 @@ import Foundation
 
 /// A request structure for creating a message in a thread.
 public struct ASACreateMessageRequest: Codable {
+
     /// The role of the entity that is creating the message. Currently only 'user' is supported.
     public let role: String
 
@@ -25,5 +26,12 @@ public struct ASACreateMessageRequest: Codable {
         case role, content
         case fileIds = "file_ids"
         case metadata
+    }
+
+    public init(role: String, content: String, fileIds: [String]? = nil, metadata: [String : String]? = nil) {
+        self.role = role
+        self.content = content
+        self.fileIds = fileIds
+        self.metadata = metadata
     }
 }

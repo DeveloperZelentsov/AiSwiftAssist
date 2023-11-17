@@ -13,7 +13,7 @@ public protocol IThreadsAPI: AnyObject {
     /// Create a thread.
     /// - Parameter createThreads: Object with parameters for creating a thread.
     /// - Returns: A thread object.
-    func create(by createThreads: ASACreateThreadRequest) async throws -> ASAThread
+    func create(by createThreads: ASACreateThreadRequest?) async throws -> ASAThread
 
     /// Retrieves a thread by its ID.
     /// - Parameter threadId: The ID of the thread to retrieve.
@@ -53,7 +53,7 @@ public final class ThreadsAPI: HTTPClient, IThreadsAPI {
         self.urlSession = urlSession
     }
 
-    public func create(by createThreads: ASACreateThreadRequest) async throws -> ASAThread {
+    public func create(by createThreads: ASACreateThreadRequest?) async throws -> ASAThread {
         let endpoint = ThreadsEndpoint.createThread(createThreads)
         return try await sendRequest(endpoint: endpoint, responseModel: ASAThread.self)
     }

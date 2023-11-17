@@ -30,4 +30,30 @@ public final class AISwiftAssistClient {
         self.runsApi = RunsAPI(urlSession: .shared)
         self.threadsApi = ThreadsAPI(urlSession: .shared)
     }
+
 }
+
+extension AISwiftAssistClient {
+    /// Creates an assistant and thread based on the provided parameters.
+    func createAssistantAndThread(with params: AssistantCreationParams) async throws -> AssistantAndThreadConfig {
+        let modelsResponse = try await modelsApi.get()
+        guard let model = modelsResponse.data.first(where: { $0.id == params.modelName }) else {
+            throw NSError(domain: "AISwiftAssistClient", code: 0, userInfo: [NSLocalizedDescriptionKey: "Model not found"])
+        }
+
+        let createAssistantRequest = ASACreateAssistantRequest(asaModel: model, 
+                                                               name: params.name,
+                                                               description: params.description, 
+                                                               instructions: params.instructions,
+                                                               tools: params.tools,
+                                                               fileIds: params.fileIds,
+                                                               metadata: params.metadata)
+        let assistant = try await assistantsApi.create(by: createAssistantRequest)
+
+        let threadRequest = ASACreateThreadRequest(messages: nil)
+        let thread = try await threadsApi.create(by: threadRequest)
+
+        return AssistantAndThreadConfig(assistant: assistant, thread: thread)
+    }
+}
+

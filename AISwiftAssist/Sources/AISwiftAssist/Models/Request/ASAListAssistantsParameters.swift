@@ -9,6 +9,7 @@ import Foundation
 
 /// Parameters for listing assistants.
 public struct ASAListAssistantsParameters: Encodable {
+    
     /// Optional: A limit on the number of objects to be returned. Can range between 1 and 100. Defaults to 20.
     public let limit: Int?
 
@@ -20,4 +21,11 @@ public struct ASAListAssistantsParameters: Encodable {
 
     /// Optional: A cursor for use in pagination. 'before' is an object ID that defines your place in the list, to fetch the previous page of the list.
     public let before: String?
+
+    public init(limit: Int? = nil, order: String? = nil, after: String? = nil, before: String? = nil) {
+        self.limit = limit
+        self.order = order
+        self.after = after
+        self.before = before
+    }
 }

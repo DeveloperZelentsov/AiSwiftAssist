@@ -8,6 +8,7 @@
 import Foundation
 /// A request structure for modifying an existing assistant.
 public struct ASAModifyAssistantRequest: Codable {
+
     /// Optional: ID of the model to use.
     public let model: String?
 
@@ -33,5 +34,15 @@ public struct ASAModifyAssistantRequest: Codable {
         case model, name, description, instructions, tools
         case fileIds = "file_ids"
         case metadata
+    }
+
+    public init(model: String? = nil, name: String? = nil, description: String? = nil, instructions: String? = nil, tools: [ASAAssistant.Tool]? = nil, fileIds: [String]? = nil, metadata: [String : String]? = nil) {
+        self.model = model
+        self.name = name
+        self.description = description
+        self.instructions = instructions
+        self.tools = tools
+        self.fileIds = fileIds
+        self.metadata = metadata
     }
 }
