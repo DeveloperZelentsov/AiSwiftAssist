@@ -47,16 +47,16 @@ public final class ModelsAPI: HTTPClient, IModelsAPI {
 
     public func get() async throws -> ASAListModelsResponse {
         let endpoint = ModelsEndpoint.getModels
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAListModelsResponse.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAListModelsResponse.self)
     }
     
     public func retrieve(by modelId: String) async throws -> ASAModel {
         let endpoint = ModelsEndpoint.retrieveModel(modelId)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAModel.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAModel.self)
     }
 
     public func delete(by modelId: String) async throws -> ASADeleteModelResponse {
         let endpoint = ModelsEndpoint.deleteModel(modelId)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASADeleteModelResponse.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASADeleteModelResponse.self)
     }
 }

@@ -62,21 +62,21 @@ public final class MessagesAPI: HTTPClient, IMessagesAPI {
 
     public func create(by threadId: String, createMessage: ASACreateMessageRequest) async throws -> ASAMessage {
         let endpoint = MessagesEndpoint.createMessage(threadId, createMessage)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAMessage.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAMessage.self)
     }
 
     public func retrieve(by threadId: String, messageId: String) async throws -> ASAMessage {
         let endpoint = MessagesEndpoint.retrieveMessage(threadId, messageId)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAMessage.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAMessage.self)
     }
 
     public func modify(by threadId: String, messageId: String, modifyMessage: ASAModifyMessageRequest) async throws -> ASAMessage {
         let endpoint = MessagesEndpoint.modifyMessage(threadId, messageId, modifyMessage)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAMessage.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAMessage.self)
     }
 
     public func getMessages(by threadId: String, parameters: ASAListMessagesParameters?) async throws -> ASAMessagesListResponse {
         let endpoint = MessagesEndpoint.listMessages(threadId, parameters)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAMessagesListResponse.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAMessagesListResponse.self)
     }
 }

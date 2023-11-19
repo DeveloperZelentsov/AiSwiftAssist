@@ -22,6 +22,7 @@ let package = Package(
             name: "AISwiftAssist"),
         .testTarget(
             name: "AISwiftAssistTests",
-            dependencies: ["AISwiftAssist"]),
+            dependencies: ["AISwiftAssist"]
+        ),
     ]
 )
