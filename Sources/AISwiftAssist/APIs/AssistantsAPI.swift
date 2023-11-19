@@ -13,7 +13,7 @@ public protocol IAssistantsAPI: AnyObject {
     /// Returns a list of assistants.
     /// - Parameter parameters: Parameters for the list of assistants.
     /// - Returns: A list of assistant objects.
-    func get(with parameters: ASAListAssistantsParameters?) async throws -> [ASAAssistant]
+    func get(with parameters: ASAListAssistantsParameters?) async throws -> ASAListAssistantsResponse
 
     /// Create an assistant with a model and instructions.
     /// - Parameter createAssistant: The create assistant model.
@@ -58,29 +58,29 @@ public final class AssistantsAPI: HTTPClient, IAssistantsAPI {
         self.urlSession = urlSession
     }
 
-    public func get(with parameters: ASAListAssistantsParameters? = nil) async throws -> [ASAAssistant] {
+    public func get(with parameters: ASAListAssistantsParameters? = nil) async throws -> ASAListAssistantsResponse {
         let endpoint = AssistantEndpoint.getAssistants(parameters)
-        return try await sendRequest(endpoint: endpoint, responseModel: [ASAAssistant].self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAListAssistantsResponse.self)
     }
 
     public func create(by createAssistant: ASACreateAssistantRequest) async throws -> ASAAssistant {
         let endpoint = AssistantEndpoint.createAssistant(createAssistant)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAAssistant.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAAssistant.self)
     }
 
     public func retrieve(by assistantId: String) async throws -> ASAAssistant {
         let endpoint = AssistantEndpoint.retrieveAssistant(assistantId)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAAssistant.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAAssistant.self)
     }
 
     public func modify(by assistantId: String, modifyAssistant: ASAModifyAssistantRequest) async throws -> ASAAssistant {
         let endpoint = AssistantEndpoint.modifyAssistant(assistantId, modifyAssistant)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAAssistant.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAAssistant.self)
     }
 
     public func delete(by assistantId: String) async throws -> ASADeleteModelResponse {
         let endpoint = AssistantEndpoint.deleteAssistant(assistantId)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASADeleteModelResponse.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASADeleteModelResponse.self)
     }
 
 }

@@ -55,21 +55,21 @@ public final class ThreadsAPI: HTTPClient, IThreadsAPI {
 
     public func create(by createThreads: ASACreateThreadRequest?) async throws -> ASAThread {
         let endpoint = ThreadsEndpoint.createThread(createThreads)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAThread.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAThread.self)
     }
 
     public func retrieve(threadId: String) async throws -> ASAThread {
         let endpoint = ThreadsEndpoint.retrieveThread(threadId)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAThread.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAThread.self)
     }
 
     public func modify(threadId: String, with modifyThread: ASAModifyThreadRequest) async throws -> ASAThread {
         let endpoint = ThreadsEndpoint.modifyThread(threadId, modifyThread)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASAThread.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAThread.self)
     }
 
     public func delete(threadId: String) async throws -> ASADeleteModelResponse {
         let endpoint = ThreadsEndpoint.deleteThread(threadId)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASADeleteModelResponse.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASADeleteModelResponse.self)
     }
 }

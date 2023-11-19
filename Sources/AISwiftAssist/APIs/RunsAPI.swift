@@ -40,7 +40,7 @@ public final class RunsAPI: HTTPClient, IRunsAPI {
 
     public func create(by threadId: String, createRun: ASACreateRunRequest) async throws -> ASARun {
         let endpoint = RunsEndpoint.createRun(threadId, createRun)
-        return try await sendRequest(endpoint: endpoint, responseModel: ASARun.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASARun.self)
     }
 
 }
