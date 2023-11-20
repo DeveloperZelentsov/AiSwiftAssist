@@ -8,7 +8,7 @@
 import Foundation
 
 /// A response structure for listing assistants.
-public struct ASAListAssistantsResponse: Codable {
+public struct ASAAssistantsListResponse: Codable {
     /// The object type, which is always 'list'.
     public let object: String
 

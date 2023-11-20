@@ -15,7 +15,7 @@ public struct ValidatorErrorResponse: Codable {
 /// Types of HTTP Request Errors
 public enum HTTPRequestError: Error {
     /// Model decoding error
-    case decode
+    case decode(String)
     /// URL validation error
     case invalidURL
     /// Error receiving response from server
@@ -47,8 +47,8 @@ public enum HTTPRequestError: Error {
 extension HTTPRequestError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .decode:
-            return "Decoding error"
+        case .decode(let message):
+            return "Decoding error\n\(message)"
         case .invalidURL:
             return "Invalid URL"
         case .noResponse:

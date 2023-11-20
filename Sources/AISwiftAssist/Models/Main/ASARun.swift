@@ -34,7 +34,7 @@ public struct ASARun: Codable {
     public let lastError: LastError?
 
     /// The Unix timestamp (in seconds) for when the run will expire.
-    public let expiresAt: Int
+    public let expiresAt: Int?
 
     /// The Unix timestamp (in seconds) for when the run was started. Null if not started.
     public let startedAt: Int?
@@ -52,10 +52,11 @@ public struct ASARun: Codable {
     public let model: String
 
     /// The instructions that the assistant used for this run.
-    public let instructions: String
+    public let instructions: String?
 
     /// The list of tools that the assistant used for this run.
-    public let tools: [String]
+    /// Tools can be of types code_interpreter, retrieval, or function.
+    public let tools: [Tool]
 
     /// The list of File IDs the assistant used for this run.
     public let fileIds: [String]
@@ -110,6 +111,12 @@ public struct ASARun: Codable {
 
         /// A human-readable description of the error.
         public let message: String
+    }
+
+    /// Represents a tool enabled on the assistant.
+    public struct Tool: Codable {
+        /// The type of the tool (e.g., code_interpreter, retrieval, function).
+        public let type: String
     }
 
     enum CodingKeys: String, CodingKey {

@@ -12,7 +12,7 @@ public protocol IModelsAPI: AnyObject {
     
     /// Lists the currently available models, and provides basic information about each one such as the owner and availability.
     /// - Returns: A list of model objects.
-    func get() async throws -> ASAListModelsResponse
+    func get() async throws -> ASAModelsListResponse
 
     /// Retrieves a model instance, providing basic information about the model such as the owner and permissioning.
     /// - Parameter modelId: The ID of the model to use for this request
@@ -45,9 +45,9 @@ public final class ModelsAPI: HTTPClient, IModelsAPI {
         self.urlSession = urlSession
     }
 
-    public func get() async throws -> ASAListModelsResponse {
+    public func get() async throws -> ASAModelsListResponse {
         let endpoint = ModelsEndpoint.getModels
-        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAListModelsResponse.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAModelsListResponse.self)
     }
     
     public func retrieve(by modelId: String) async throws -> ASAModel {

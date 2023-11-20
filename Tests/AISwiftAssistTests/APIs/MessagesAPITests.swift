@@ -109,7 +109,8 @@ final class MessagesAPITests: XCTestCase {
                 return (response, mockData)
             }
 
-            let listResponse: ASAMessagesListResponse = try await messagesAPI.getMessages(by: "thread_abc123", parameters: nil)
+            let listResponse: ASAMessagesListResponse = try await messagesAPI.getMessages(by: "thread_abc123", 
+                                                                                          parameters: nil)
 
             XCTAssertEqual(listResponse.object, "list")
             XCTAssertEqual(listResponse.data.count, 2)
@@ -121,6 +122,5 @@ final class MessagesAPITests: XCTestCase {
             XCTFail("Error: \(error)")
         }
     }
-
 
 }

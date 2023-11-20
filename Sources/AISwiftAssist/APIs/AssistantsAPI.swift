@@ -13,7 +13,7 @@ public protocol IAssistantsAPI: AnyObject {
     /// Returns a list of assistants.
     /// - Parameter parameters: Parameters for the list of assistants.
     /// - Returns: A list of assistant objects.
-    func get(with parameters: ASAListAssistantsParameters?) async throws -> ASAListAssistantsResponse
+    func get(with parameters: ASAListAssistantsParameters?) async throws -> ASAAssistantsListResponse
 
     /// Create an assistant with a model and instructions.
     /// - Parameter createAssistant: The create assistant model.
@@ -58,9 +58,9 @@ public final class AssistantsAPI: HTTPClient, IAssistantsAPI {
         self.urlSession = urlSession
     }
 
-    public func get(with parameters: ASAListAssistantsParameters? = nil) async throws -> ASAListAssistantsResponse {
+    public func get(with parameters: ASAListAssistantsParameters? = nil) async throws -> ASAAssistantsListResponse {
         let endpoint = AssistantEndpoint.getAssistants(parameters)
-        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAListAssistantsResponse.self)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAAssistantsListResponse.self)
     }
 
     public func create(by createAssistant: ASACreateAssistantRequest) async throws -> ASAAssistant {
