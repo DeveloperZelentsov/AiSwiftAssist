@@ -35,7 +35,7 @@ final class ModelsAPITests: XCTestCase {
                 return (response, mockData)
             }
 
-            let listResponse: ASAListModelsResponse = try await modelsAPI.get()
+            let listResponse: ASAModelsListResponse = try await modelsAPI.get()
 
             XCTAssertEqual(listResponse.data[0].id, "model-id-0")
             XCTAssertEqual(listResponse.data[0].object, "model")

@@ -35,7 +35,7 @@ final class AssistantsAPITests: XCTestCase {
                 return (response, mockData)
             }
 
-            let response: ASAListAssistantsResponse = try await assistantsAPI.get(with: nil)
+            let response: ASAAssistantsListResponse = try await assistantsAPI.get(with: nil)
 
             XCTAssertNotNil(response)
             XCTAssertEqual(response.object, "list")

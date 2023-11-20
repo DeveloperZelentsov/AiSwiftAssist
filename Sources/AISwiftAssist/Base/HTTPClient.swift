@@ -58,18 +58,20 @@ extension HTTPClient {
             if responseModel is Data.Type {
                 return responseModel as! T
             }
-            if let decodeData = data.decode(model: responseModel) {
+            do {
+                let decodeData = try data.decode(model: responseModel)
                 return decodeData
-            } else {
-                throw HTTPRequestError.decode
+            } catch {
+                throw HTTPRequestError.decode(error.localizedDescription)
             }
         case 400:
-            if let decodeData = data.decode(model: ValidatorErrorResponse.self) {
+            do {
+                let decodeData = try data.decode(model: ValidatorErrorResponse.self)
                 throw HTTPRequestError.validator(error: decodeData)
+            } catch {
+                throw HTTPRequestError.unexpectedStatusCode(code: responseCode,
+                                                            localized: responseCode.localStatusCode)
             }
-            throw HTTPRequestError.unexpectedStatusCode(code: responseCode,
-                                                        localized: responseCode.localStatusCode)
-
         case 401, 403: throw HTTPRequestError.unauthorizate
         default: throw HTTPRequestError.unexpectedStatusCode(code: responseCode,
                                                              localized: responseCode.localStatusCode)
