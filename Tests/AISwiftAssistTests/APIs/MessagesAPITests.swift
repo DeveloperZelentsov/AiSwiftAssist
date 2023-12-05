@@ -123,4 +123,45 @@ final class MessagesAPITests: XCTestCase {
         }
     }
 
+    func testRetrieveFile() async {
+        do {
+            let mockData = Self.retrieveFile.data(using: .utf8)!
+
+            MockURLProtocol.requestHandler = { request in
+                let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                return (response, mockData)
+            }
+
+            let file: ASAMessageFile = try await messagesAPI.retrieveFile(by: "thread_abc123", messageId: "msg_abc123", fileId: "file-abc123")
+
+            XCTAssertEqual(file.id, "file-abc123")
+            XCTAssertEqual(file.object, "thread.message.file")
+            XCTAssertEqual(file.createdAt, 1698107661)
+            XCTAssertEqual(file.messageId, "message_QLoItBbqwyAJEzlTy4y9kOMM")
+        } catch {
+            XCTFail("Error: \(error)")
+        }
+    }
+    
+    func testListFiles() async {
+        do {
+            let mockData = Self.listFiles.data(using: .utf8)!
+
+            MockURLProtocol.requestHandler = { request in
+                let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                return (response, mockData)
+            }
+
+            let listResponse: ASAMessageFilesListResponse = try await messagesAPI.listFiles(by: "thread_abc123", messageId: "msg_abc123", parameters: nil)
+
+            XCTAssertEqual(listResponse.object, "list")
+            XCTAssertEqual(listResponse.data.count, 2)
+            XCTAssertEqual(listResponse.data[0].id, "file-abc123")
+            XCTAssertEqual(listResponse.data[0].createdAt, 1698107661)
+            XCTAssertEqual(listResponse.data[0].messageId, "message_QLoItBbqwyAJEzlTy4y9kOMM")
+        } catch {
+            XCTFail("Error: \(error)")
+        }
+    }
+
 }

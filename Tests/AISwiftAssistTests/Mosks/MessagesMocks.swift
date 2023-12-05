@@ -137,4 +137,39 @@ extension MessagesAPITests {
           "metadata": {}
         }
         """
+
+    static let retrieveFile: String =
+        """
+        {
+          "id": "file-abc123",
+          "object": "thread.message.file",
+          "created_at": 1698107661,
+          "message_id": "message_QLoItBbqwyAJEzlTy4y9kOMM",
+          "file_id": "file-abc123"
+        }
+        """
+    
+    static let listFiles: String =
+        """
+        {
+          "object": "list",
+          "data": [
+            {
+              "id": "file-abc123",
+              "object": "thread.message.file",
+              "created_at": 1698107661,
+              "message_id": "message_QLoItBbqwyAJEzlTy4y9kOMM"
+            },
+            {
+              "id": "file-abc456",
+              "object": "thread.message.file",
+              "created_at": 1698107662,
+              "message_id": "message_QLoItBbqwyAJEzlTy4y9kONN"
+            }
+          ],
+          "first_id": "file-abc123",
+          "last_id": "file-abc456",
+          "has_more": false
+        }
+        """
 }

@@ -12,6 +12,8 @@ enum MessagesEndpoint {
     case retrieveMessage(String, String)
     case modifyMessage(String, String, ASAModifyMessageRequest)
     case listMessages(String, ASAListMessagesParameters?)
+    case retrieveFile(String, String, String)
+    case listFiles(String, String, ASAListMessagesParameters?)
 }
 
 extension MessagesEndpoint: CustomEndpoint {
@@ -25,8 +27,9 @@ extension MessagesEndpoint: CustomEndpoint {
     public var queryItems: [URLQueryItem]? {
         var items: [URLQueryItem]?
         switch self {
-        case .createMessage, .retrieveMessage, .modifyMessage: items = nil
+        case .createMessage, .retrieveMessage, .modifyMessage, .retrieveFile: items = nil
         case .listMessages(_, let params): items = Utils.createURLQueryItems(from: params)
+        case .listFiles(_, _, let params): items = Utils.createURLQueryItems(from: params)
         }
         return items
     }
@@ -41,6 +44,11 @@ extension MessagesEndpoint: CustomEndpoint {
             return "threads/\(threadId)/messages/\(messageId)"
         case .listMessages(let threadId, _):
             return "threads/\(threadId)/messages"
+        case .retrieveFile(let threadId, let messageId, let fileId):
+            return "threads/\(threadId)/messages/\(messageId)/files/\(fileId)"
+        case .listFiles(let threadId, let messageId, _):
+            return "threads/\(threadId)/messages/\(messageId)/files"
+
         }
     }
 
@@ -50,6 +58,8 @@ extension MessagesEndpoint: CustomEndpoint {
         case .retrieveMessage: return .get
         case .modifyMessage: return .post
         case .listMessages: return .get
+        case .retrieveFile: return .get
+        case .listFiles: return .get
         }
     }
 
@@ -65,6 +75,8 @@ extension MessagesEndpoint: CustomEndpoint {
         case .modifyMessage(_, _, let request): return .init(object: request)
         case .retrieveMessage: return nil
         case .listMessages: return nil
+        case .retrieveFile: return nil
+        case .listFiles: return nil
         }
     }
 }

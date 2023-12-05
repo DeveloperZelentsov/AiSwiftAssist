@@ -264,7 +264,7 @@ final class AssistantsAPITests: XCTestCase {
                 return (response, mockData)
             }
 
-            let listParameters = ASAListFilesParameters()
+            let listParameters = ASAListAssistantsParameters()
             let fileList: ASAAssistantFilesListResponse = try await assistantsAPI.listFiles(for: "asst_abc123", with: listParameters)
 
             // Checks
@@ -279,6 +279,4 @@ final class AssistantsAPITests: XCTestCase {
             XCTFail("Error: \(error)")
         }
     }
-
-
 }
