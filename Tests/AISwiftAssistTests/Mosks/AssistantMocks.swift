@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 extension AssistantsAPITests {
     static let list: String =
                 """
@@ -56,7 +55,7 @@ extension AssistantsAPITests {
       "has_more": false
     }
     """
-
+    
     static let create: String =
                 """
         {
@@ -76,9 +75,9 @@ extension AssistantsAPITests {
           "metadata": {}
         }
         """
-
+    
     static let retrieve: String =
-    """
+        """
         {
           "id": "asst_abc123",
           "object": "assistant",
@@ -98,9 +97,9 @@ extension AssistantsAPITests {
           "metadata": {}
         }
         """
-
+    
     static let modify: String =
-    """
+        """
         {
           "id": "asst_abc123",
           "object": "assistant",
@@ -121,7 +120,7 @@ extension AssistantsAPITests {
           "metadata": {}
         }
         """
-
+    
     static let delete: String =
     """
     {
@@ -130,5 +129,58 @@ extension AssistantsAPITests {
       "deleted": true
     }
     """
+    
+    static let createFile: String =
+        """
+        {
+          "id": "file-abc123",
+          "object": "assistant.file",
+          "created_at": 1699055364,
+          "assistant_id": "asst_abc123"
+        }
+        """
+    
+    static let retrieveFile: String =
+        """
+        {
+          "id": "file-abc123",
+          "object": "assistant.file",
+          "created_at": 1699055364,
+          "assistant_id": "asst_abc123"
+        }
+        """
+    
+    static let deleteFile: String =
+        """
+        {
+          "id": "file-abc123",
+          "object": "assistant.file.deleted",
+          "deleted": true
+        }
+        """
+    
+    static let listFiles: String =
+        """
+        {
+          "object": "list",
+          "data": [
+            {
+              "id": "file-abc123",
+              "object": "assistant.file",
+              "created_at": 1699060412,
+              "assistant_id": "asst_abc123"
+            },
+            {
+              "id": "file-abc456",
+              "object": "assistant.file",
+              "created_at": 1699060412,
+              "assistant_id": "asst_abc123"
+            }
+          ],
+          "first_id": "file-abc123",
+          "last_id": "file-abc456",
+          "has_more": false
+        }
+        """
 }
 
