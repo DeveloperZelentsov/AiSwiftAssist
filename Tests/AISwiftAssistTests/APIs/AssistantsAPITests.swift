@@ -188,5 +188,97 @@ final class AssistantsAPITests: XCTestCase {
         }
     }
 
+    func testCreateFile() async {
+        do {
+            // Simulate server response
+            let mockData = AssistantsAPITests.createFile.data(using: .utf8)!
+
+            MockURLProtocol.requestHandler = { request in
+                let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                return (response, mockData)
+            }
+
+            let createRequest = ASACreateAssistantFileRequest(fileId: "file-abc123")
+            let file: ASAAssistantFile = try await assistantsAPI.createFile(for: "asst_abc123", with: createRequest)
+
+            // Checks
+            XCTAssertEqual(file.id, "file-abc123")
+            XCTAssertEqual(file.objectType, "assistant.file")
+            XCTAssertEqual(file.createdAt, 1699055364)
+            XCTAssertEqual(file.assistantId, "asst_abc123")
+        } catch {
+            XCTFail("Error: \(error)")
+        }
+    }
+
+    func testRetrieveFile() async {
+        do {
+            // Simulate server response
+            let mockData = AssistantsAPITests.retrieveFile.data(using: .utf8)!
+
+            MockURLProtocol.requestHandler = { request in
+                let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                return (response, mockData)
+            }
+
+            let file: ASAAssistantFile = try await assistantsAPI.retrieveFile(for: "asst_abc123", fileId: "file-abc123")
+
+            // Checks
+            XCTAssertEqual(file.id, "file-abc123")
+            XCTAssertEqual(file.objectType, "assistant.file")
+            XCTAssertEqual(file.createdAt, 1699055364)
+            XCTAssertEqual(file.assistantId, "asst_abc123")
+        } catch {
+            XCTFail("Error: \(error)")
+        }
+    }
+
+    func testDeleteFile() async {
+        do {
+            // Simulate server response
+            let mockData = AssistantsAPITests.deleteFile.data(using: .utf8)!
+
+            MockURLProtocol.requestHandler = { request in
+                let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                return (response, mockData)
+            }
+
+            let deleteResponse: ASADeleteModelResponse = try await assistantsAPI.deleteFile(for: "asst_abc123", fileId: "file-abc123")
+
+            // Checks
+            XCTAssertEqual(deleteResponse.id, "file-abc123")
+            XCTAssertEqual(deleteResponse.object, "assistant.file.deleted")
+            XCTAssertTrue(deleteResponse.deleted)
+        } catch {
+            XCTFail("Error: \(error)")
+        }
+    }
+
+    func testListFiles() async {
+        do {
+            // Simulate server response
+            let mockData = AssistantsAPITests.listFiles.data(using: .utf8)!
+
+            MockURLProtocol.requestHandler = { request in
+                let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+                return (response, mockData)
+            }
+
+            let listParameters = ASAListFilesParameters()
+            let fileList: ASAAssistantFilesListResponse = try await assistantsAPI.listFiles(for: "asst_abc123", with: listParameters)
+
+            // Checks
+            XCTAssertEqual(fileList.object, "list")
+            XCTAssertEqual(fileList.data.count, 2)
+            XCTAssertEqual(fileList.firstId, "file-abc123")
+            XCTAssertEqual(fileList.lastId, "file-abc456")
+            XCTAssertFalse(fileList.hasMore)
+            XCTAssertEqual(fileList.data[0].id, "file-abc123")
+            XCTAssertEqual(fileList.data[1].id, "file-abc456")
+        } catch {
+            XCTFail("Error: \(error)")
+        }
+    }
+
 
 }
