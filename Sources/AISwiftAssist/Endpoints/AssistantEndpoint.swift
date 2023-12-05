@@ -16,7 +16,7 @@ enum AssistantEndpoint {
     case createFile(String, ASACreateAssistantFileRequest)
     case retrieveFile(String, String)
     case deleteFile(String, String)
-    case listFiles(String, ASAListFilesParameters?)
+    case listFiles(String, ASAListAssistantsParameters?)
 }
 
 extension AssistantEndpoint: CustomEndpoint {

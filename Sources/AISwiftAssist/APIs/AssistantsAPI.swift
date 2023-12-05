@@ -63,7 +63,7 @@ public protocol IAssistantsAPI: AnyObject {
     ///   - assistantId: The ID of the assistant the file belongs to.
     ///   - parameters: Parameters for the list of assistant files.
     /// - Returns: A list of assistant file objects.
-    func listFiles(for assistantId: String, with parameters: ASAListFilesParameters?) async throws -> ASAAssistantFilesListResponse
+    func listFiles(for assistantId: String, with parameters: ASAListAssistantsParameters?) async throws -> ASAAssistantFilesListResponse
 }
 
 public final class AssistantsAPI: HTTPClient, IAssistantsAPI {
@@ -126,7 +126,7 @@ public final class AssistantsAPI: HTTPClient, IAssistantsAPI {
         return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASADeleteModelResponse.self)
     }
 
-    public func listFiles(for assistantId: String, with parameters: ASAListFilesParameters? = nil) async throws -> ASAAssistantFilesListResponse {
+    public func listFiles(for assistantId: String, with parameters: ASAListAssistantsParameters? = nil) async throws -> ASAAssistantFilesListResponse {
         let endpoint = AssistantEndpoint.listFiles(assistantId, parameters)
         return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAAssistantFilesListResponse.self)
     }
