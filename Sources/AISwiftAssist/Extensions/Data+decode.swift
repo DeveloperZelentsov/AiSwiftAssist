@@ -9,6 +9,11 @@ import Foundation
 
 extension Data {
     func decode<T: Decodable>(model: T.Type) throws -> T {
-        return try JSONDecoder().decode(model, from: self)
+        do {
+            return try JSONDecoder().decode(model, from: self)
+        } catch {
+            print(error)
+            throw error
+        }
     }
 }
