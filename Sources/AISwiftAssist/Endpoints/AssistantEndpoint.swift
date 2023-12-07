@@ -13,6 +13,10 @@ enum AssistantEndpoint {
     case retrieveAssistant(String)
     case modifyAssistant(String, ASAModifyAssistantRequest)
     case deleteAssistant(String)
+    case createFile(String, ASACreateAssistantFileRequest)
+    case retrieveFile(String, String)
+    case deleteFile(String, String)
+    case listFiles(String, ASAListAssistantsParameters?)
 }
 
 extension AssistantEndpoint: CustomEndpoint {
@@ -26,8 +30,9 @@ extension AssistantEndpoint: CustomEndpoint {
     public var queryItems: [URLQueryItem]? {
         var items: [URLQueryItem]?
         switch self {
-        case .createAssistant, .deleteAssistant, .retrieveAssistant, .modifyAssistant: items = nil
+        case .createAssistant, .deleteAssistant, .retrieveAssistant, .modifyAssistant, .createFile, .retrieveFile, .deleteFile: items = nil
         case .getAssistants(let params): items = Utils.createURLQueryItems(from: params)
+        case .listFiles(_, let params): items = Utils.createURLQueryItems(from: params)
         }
         return items
     }
@@ -38,6 +43,10 @@ extension AssistantEndpoint: CustomEndpoint {
         case .retrieveAssistant(let assistantId): return "assistants/\(assistantId)"
         case .modifyAssistant(let assistantId, _): return "assistants/\(assistantId)"
         case .deleteAssistant(let assistantId): return "assistants/\(assistantId)"
+        case .createFile(let assistantId, _): return "assistants/\(assistantId)/files"
+        case .retrieveFile(let assistantId, let fileId): return "assistants/\(assistantId)/files/\(fileId)"
+        case .deleteFile(let assistantId, let fileId): return "assistants/\(assistantId)/files/\(fileId)"
+        case .listFiles(let assistantId, _): return "assistants/\(assistantId)/files"
         }
     }
 
@@ -48,6 +57,10 @@ extension AssistantEndpoint: CustomEndpoint {
         case .retrieveAssistant: return .get
         case .modifyAssistant: return .post
         case .deleteAssistant: return .delete
+        case .createFile: return .post
+        case .retrieveFile: return .get
+        case .deleteFile: return .delete
+        case .listFiles: return .get
         }
     }
 
@@ -61,8 +74,8 @@ extension AssistantEndpoint: CustomEndpoint {
         switch self {
         case .createAssistant(let createAssistant): return .init(object: createAssistant)
         case .modifyAssistant(_, let request): return .init(object: request)
-        case .deleteAssistant, .retrieveAssistant, .getAssistants: return nil
-
+        case .createFile(_, let request): return .init(object: request)
+        case .deleteAssistant, .retrieveAssistant, .getAssistants, .retrieveFile, .deleteFile, .listFiles: return nil
         }
     }
 }

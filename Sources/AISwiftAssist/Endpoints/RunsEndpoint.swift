@@ -12,6 +12,11 @@ enum RunsEndpoint {
     case retrieveRun(String, String)
     case modifyRun(String, String, ASAModifyRunRequest)
     case listRuns(String, ASAListRunsParameters?)
+    case submitToolOutputs(String, String, [ASAToolOutput])
+    case cancelRun(String, String)
+    case createThreadAndRun(ASACreateThreadRunRequest)
+    case retrieveRunStep(String, String, String)
+    case listRunSteps(String, String, ASAListRunStepsParameters?)
 }
 
 extension RunsEndpoint: CustomEndpoint {
@@ -26,8 +31,9 @@ extension RunsEndpoint: CustomEndpoint {
     public var queryItems: [URLQueryItem]? {
         var items: [URLQueryItem]?
         switch self {
-        case .createRun, .retrieveRun, .modifyRun: items = nil
-        case .listRuns(_, let params): return Utils.createURLQueryItems(from: params)
+        case .createRun, .retrieveRun, .modifyRun, .submitToolOutputs, .cancelRun, .createThreadAndRun, .retrieveRunStep: items = nil
+        case .listRuns(_, let params): items = Utils.createURLQueryItems(from: params)
+        case .listRunSteps(_, _, let params): items = Utils.createURLQueryItems(from: params)
         }
         return items
     }
@@ -42,6 +48,16 @@ extension RunsEndpoint: CustomEndpoint {
             return "threads/\(threadId)/runs/\(runId)"
         case .listRuns(let threadId, _):
             return "threads/\(threadId)/runs"
+        case .submitToolOutputs(let threadId, let runId, _):
+            return "threads/\(threadId)/runs/\(runId)/submit_tool_outputs"
+        case .cancelRun(let threadId, let runId):
+            return "threads/\(threadId)/runs/\(runId)/cancel"
+        case .createThreadAndRun:
+            return "threads/runs"
+        case .retrieveRunStep(let threadId, let runId, let stepId):
+            return "threads/\(threadId)/runs/\(runId)/steps/\(stepId)"
+        case .listRunSteps(let threadId, let runId, _):
+            return "threads/\(threadId)/runs/\(runId)/steps"
         }
     }
 
@@ -54,6 +70,16 @@ extension RunsEndpoint: CustomEndpoint {
         case .modifyRun:
             return .post
         case .listRuns:
+            return .get
+        case .submitToolOutputs:
+            return .post
+        case .cancelRun:
+            return .post
+        case .createThreadAndRun:
+            return .post
+        case .retrieveRunStep:
+            return .get
+        case .listRunSteps:
             return .get
         }
     }
@@ -70,7 +96,11 @@ extension RunsEndpoint: CustomEndpoint {
             return .init(object: request)
         case .modifyRun(_, _, let request):
             return .init(object: request)
-        case .retrieveRun, .listRuns:
+        case .submitToolOutputs(_, _, let toolOutputs):
+            return .init(object: ["tool_outputs": toolOutputs])
+        case .createThreadAndRun(let request):
+            return .init(object: request)
+        case .retrieveRun, .listRuns, .cancelRun, .retrieveRunStep, .listRunSteps:
             return nil
         }
     }
