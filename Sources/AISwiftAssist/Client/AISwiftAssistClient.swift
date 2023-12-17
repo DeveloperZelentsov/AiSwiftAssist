@@ -37,13 +37,13 @@ extension AISwiftAssistClient {
     /// Creates an assistant and thread based on the provided parameters.
     public func createAssistantAndThread(with params: AssistantCreationParams) async throws -> AssistantAndThreadConfig {
         let modelsResponse = try await modelsApi.get()
-        guard let model = modelsResponse.data.first(where: { $0.id == params.modelName }) else {
+        guard let model = modelsResponse.data.first(where: { $0.id == params.model.rawValue }) else {
             throw NSError(domain: "AISwiftAssistClient", code: 0, userInfo: [NSLocalizedDescriptionKey: "Model not found"])
         }
 
-        let createAssistantRequest = ASACreateAssistantRequest(asaModel: model, 
+        let createAssistantRequest = ASACreateAssistantRequest(asaModel: model,
                                                                name: params.name,
-                                                               description: params.description, 
+                                                               description: params.description,
                                                                instructions: params.instructions,
                                                                tools: params.tools,
                                                                fileIds: params.fileIds,
@@ -56,4 +56,3 @@ extension AISwiftAssistClient {
         return AssistantAndThreadConfig(assistant: assistant, thread: thread)
     }
 }
-
