@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents a response containing a list of assistant files.
-public struct ASAMessageFilesListResponse: Codable {
+public struct ASAMessageFilesListResponse: Codable, Sendable {
     /// The object type, which is always 'list'.
     public let object: String
 

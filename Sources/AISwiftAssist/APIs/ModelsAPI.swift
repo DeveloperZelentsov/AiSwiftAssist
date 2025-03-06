@@ -8,7 +8,7 @@
 import Foundation
 
 /// Describes an OpenAI model offering that can be used with the API. [Link for Models](https://platform.openai.com/docs/api-reference/models)
-public protocol IModelsAPI: AnyObject {
+public protocol IModelsAPI: AnyObject, Sendable {
     
     /// Lists the currently available models, and provides basic information about each one such as the owner and availability.
     /// - Returns: A list of model objects.
@@ -25,19 +25,17 @@ public protocol IModelsAPI: AnyObject {
     func delete(by modelId: String) async throws -> ASADeleteModelResponse
 }
 
-public final class ModelsAPI: HTTPClient, IModelsAPI {
+public actor ModelsAPI: HTTPClient, IModelsAPI {
 
     let urlSession: URLSession
 
-    public init(apiKey: String,
-                baseScheme: String = Constants.baseScheme,
-                baseHost: String = Constants.baseHost,
-                path: String = Constants.path,
-                urlSession: URLSession = .shared) {
-        Constants.apiKey = apiKey
-        Constants.baseScheme = baseScheme
-        Constants.baseHost = baseHost
-        Constants.path = path
+    public init(
+        config: AISwiftAssistConfig,
+        constants: AISwiftAssistConstants = .default,
+        urlSession: URLSession = .shared
+    ) {
+        Constants.config = config
+        Constants.constants = constants
         self.urlSession = urlSession
     }
 

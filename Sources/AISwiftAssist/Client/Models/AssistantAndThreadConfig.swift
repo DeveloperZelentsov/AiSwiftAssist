@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct AssistantAndThreadConfig {
+public struct AssistantAndThreadConfig: Sendable {
     public let assistant: ASAAssistant
     public let thread: ASAThread
 }

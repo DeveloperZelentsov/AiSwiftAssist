@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents a step in the execution of a run.
-public struct ASARunStep: Codable {
+public struct ASARunStep: Codable, Sendable {
     /// The identifier of the run step, which can be referenced in API endpoints.
     let id: String
 
@@ -55,13 +55,13 @@ public struct ASARunStep: Codable {
     let metadata: [String: String]?
 
     /// A structure to represent the step details.
-    struct StepDetails: Codable {
+    struct StepDetails: Codable, Sendable {
         let type: String // This can be 'message_creation' or 'tool_calls'.
         let messageCreation: MessageCreation?
         let toolCalls: [ToolCall]?
 
         /// A structure to represent the message creation details.
-        struct MessageCreation: Codable {
+        struct MessageCreation: Codable, Sendable {
             let messageId: String
 
             enum CodingKeys: String, CodingKey {
@@ -70,7 +70,7 @@ public struct ASARunStep: Codable {
         }
 
         /// A structure to represent the tool calls.
-        struct ToolCall: Codable {
+        struct ToolCall: Codable, Sendable {
             let id: String
             let type: String // This can be 'code_interpreter', 'retrieval', or 'function'.
             let details: ToolCallDetails?
@@ -80,7 +80,7 @@ public struct ASARunStep: Codable {
             }
 
             /// A structure to represent the details of a tool call.
-            struct ToolCallDetails: Codable {
+            struct ToolCallDetails: Codable, Sendable {
                 let codeInterpreter: CodeInterpreter?
                 let retrieval: Retrieval?
                 let function: FunctionCall?
@@ -92,7 +92,7 @@ public struct ASARunStep: Codable {
                 }
 
                 /// A structure to represent the code interpreter tool call.
-                struct CodeInterpreter: Codable {
+                struct CodeInterpreter: Codable, Sendable {
                     let id: String
                     let type: String // This will always be 'code_interpreter'.
                     let input: String
@@ -103,7 +103,7 @@ public struct ASARunStep: Codable {
                     }
 
                     /// A structure to represent the outputs of a code interpreter tool call.
-                    struct CodeInterpreterOutput: Codable {
+                    struct CodeInterpreterOutput: Codable, Sendable {
                         let type: String // Can be 'logs' or 'image'.
                         let logs: String?
                         let image: ImageOutput?
@@ -113,7 +113,7 @@ public struct ASARunStep: Codable {
                         }
 
                         /// A structure to represent the image output.
-                        struct ImageOutput: Codable {
+                        struct ImageOutput: Codable, Sendable {
                             let fileId: String
 
                             enum CodingKeys: String, CodingKey {
@@ -124,12 +124,12 @@ public struct ASARunStep: Codable {
                 }
 
                 /// A structure to represent the retrieval tool call.
-                struct Retrieval: Codable {
+                struct Retrieval: Codable, Sendable {
                     // For now, it's always an empty object.
                 }
 
                 /// A structure to represent the function tool call.
-                struct FunctionCall: Codable {
+                struct FunctionCall: Codable, Sendable {
                     let name: String
                     let arguments: String
                     let output: String?
@@ -149,7 +149,7 @@ public struct ASARunStep: Codable {
     }
 
     /// A structure to represent the last error.
-    struct LastError: Codable {
+    struct LastError: Codable, Sendable {
         /// One of `server_error` or `rate_limit_exceeded`.
         let code: String
 

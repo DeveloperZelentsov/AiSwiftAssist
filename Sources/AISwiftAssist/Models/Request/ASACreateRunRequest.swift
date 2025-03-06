@@ -8,7 +8,7 @@
 import Foundation
 
 /// A request structure for creating a run in a thread.
-public struct ASACreateRunRequest: Codable {
+public struct ASACreateRunRequest: Codable, Sendable {
     
     /// The ID of the assistant to use to execute this run.
     public let assistantId: String
@@ -26,7 +26,7 @@ public struct ASACreateRunRequest: Codable {
     public let metadata: [String: String]?
 
     /// Represents a tool that can be used by the assistant during the run.
-    public struct Tool: Codable {
+    public struct Tool: Codable, Sendable {
         /// The type of tool being defined: 'code_interpreter', 'retrieval', 'function'.
         public let type: String
 
@@ -34,7 +34,7 @@ public struct ASACreateRunRequest: Codable {
         public let function: Function?
 
         /// Represents a function tool's details.
-        public struct Function: Codable {
+        public struct Function: Codable, Sendable {
             /// Optional: A description of what the function does.
             public let description: String?
 

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Parameters for listing assistants.
-public struct ASAListAssistantsParameters: Encodable {
+public struct ASAListAssistantsParameters: Encodable, Sendable {
     
     /// Optional: A limit on the number of objects to be returned. Can range between 1 and 100. Defaults to 20.
     public let limit: Int?

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents an execution run on a thread.
-public struct ASARun: Codable {
+public struct ASARun: Codable, Sendable {
     /// The identifier of the run, which can be referenced in API endpoints.
     public let id: String
 
@@ -65,7 +65,7 @@ public struct ASARun: Codable {
     public let metadata: [String: String]?
 
     /// Represents the required action details for the run to continue.
-    public struct RequiredAction: Codable {
+    public struct RequiredAction: Codable, Sendable {
         /// For now, this is always 'submit_tool_outputs'.
         public let type: String
 
@@ -78,12 +78,12 @@ public struct ASARun: Codable {
         }
 
         /// Represents the tool outputs needed for this run to continue.
-        public struct SubmitToolOutputs: Codable {
+        public struct SubmitToolOutputs: Codable, Sendable {
             /// A list of the relevant tool calls.
             public let toolCalls: [ToolCall]
 
             /// Represents a single tool call.
-            public struct ToolCall: Codable {
+            public struct ToolCall: Codable, Sendable {
                 /// The ID of the tool call.
                 public let id: String
 
@@ -94,7 +94,7 @@ public struct ASARun: Codable {
                 public let function: Function
 
                 /// Represents the function definition.
-                public struct Function: Codable {
+                public struct Function: Codable, Sendable {
                     /// The name of the function.
                     public let name: String
 
@@ -105,7 +105,7 @@ public struct ASARun: Codable {
         }
     }
 
-    public struct LastError: Codable {
+    public struct LastError: Codable, Sendable {
         /// One of 'server_error' or 'rate_limit_exceeded'.
         public let code: String
 
@@ -114,7 +114,7 @@ public struct ASARun: Codable {
     }
 
     /// Represents a tool enabled on the assistant.
-    public struct Tool: Codable {
+    public struct Tool: Codable, Sendable {
         /// The type of the tool (e.g., code_interpreter, retrieval, function).
         public let type: String
     }

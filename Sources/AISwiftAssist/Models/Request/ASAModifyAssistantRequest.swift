@@ -7,7 +7,7 @@
 
 import Foundation
 /// A request structure for modifying an existing assistant.
-public struct ASAModifyAssistantRequest: Codable {
+public struct ASAModifyAssistantRequest: Codable, Sendable {
 
     /// Optional: ID of the model to use.
     public let model: String?

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ASACreateAssistantRequest: Codable {
+public struct ASACreateAssistantRequest: Codable, Sendable {
     /// ID of the model to use. You can use the List models API to see all of your available models.
     public let model: String
 
@@ -59,7 +59,7 @@ public struct ASACreateAssistantRequest: Codable {
     }
 
     /// Represents a tool enabled on the assistant.
-    public struct Tool: Codable {
+    public struct Tool: Codable, Sendable {
         /// The type of the tool (e.g., code_interpreter, retrieval, function).
         let type: String
     }

@@ -8,11 +8,11 @@
 import Foundation
 
 /// A request structure for creating a thread.
-public struct ASACreateThreadRequest: Codable {
+public struct ASACreateThreadRequest: Codable, Sendable {
     /// Optional: A list of messages to start the thread with.
     public let messages: [Message]?
 
-    public struct Message: Codable {
+    public struct Message: Codable, Sendable {
         /// Required: The role of the entity that is creating the message. Currently, only 'user' is supported.
         public let role: String
 

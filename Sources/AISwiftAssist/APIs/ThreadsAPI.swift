@@ -8,7 +8,7 @@
 import Foundation
 
 /// Create threads that assistants can interact with. [Link for Threads](https://platform.openai.com/docs/api-reference/threads)
-public protocol IThreadsAPI: AnyObject {
+public protocol IThreadsAPI: AnyObject, Sendable {
     
     /// Create a thread.
     /// - Parameter createThreads: Object with parameters for creating a thread.
@@ -33,19 +33,17 @@ public protocol IThreadsAPI: AnyObject {
     func delete(threadId: String) async throws -> ASADeleteModelResponse
 }
 
-public final class ThreadsAPI: HTTPClient, IThreadsAPI {
+public actor ThreadsAPI: HTTPClient, IThreadsAPI {
     
     let urlSession: URLSession
 
-    public init(apiKey: String,
-                baseScheme: String = Constants.baseScheme,
-                baseHost: String = Constants.baseHost,
-                path: String = Constants.path,
-                urlSession: URLSession = .shared) {
-        Constants.apiKey = apiKey
-        Constants.baseScheme = baseScheme
-        Constants.baseHost = baseHost
-        Constants.path = path
+    public init(
+        config: AISwiftAssistConfig,
+        constants: AISwiftAssistConstants = .default,
+        urlSession: URLSession = .shared
+    ) {
+        Constants.config = config
+        Constants.constants = constants
         self.urlSession = urlSession
     }
 

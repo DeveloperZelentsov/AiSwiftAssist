@@ -7,7 +7,7 @@
 
 import Foundation
 /// Represents a thread that contains messages.
-public struct ASAThread: Codable {
+public struct ASAThread: Codable, Sendable {
     /// The identifier of the thread, which can be referenced in API endpoints.
     public let id: String
 

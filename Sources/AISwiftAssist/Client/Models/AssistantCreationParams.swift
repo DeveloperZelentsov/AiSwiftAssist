@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct AssistantCreationParams {
+public struct AssistantCreationParams: Sendable {
     
     public let model: ASAOpenAIModel
     public let name: String
@@ -17,7 +17,15 @@ public struct AssistantCreationParams {
     public let fileIds: [String]?
     public let metadata: [String: String]?
 
-    public init(model: ASAOpenAIModel, name: String, description: String, instructions: String, tools: [ASACreateAssistantRequest.Tool]? = nil, fileIds: [String]? = nil, metadata: [String : String]? = nil) {
+    public init(
+        model: ASAOpenAIModel,
+        name: String,
+        description: String,
+        instructions: String,
+        tools: [ASACreateAssistantRequest.Tool]? = nil,
+        fileIds: [String]? = nil,
+        metadata: [String : String]? = nil
+    ) {
         self.model = model
         self.name = name
         self.description = description

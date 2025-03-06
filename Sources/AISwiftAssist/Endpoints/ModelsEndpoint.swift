@@ -17,7 +17,7 @@ extension ModelsEndpoint: CustomEndpoint {
     public var url: URL? {
         var urlComponents: URLComponents = .default
         urlComponents.queryItems = queryItems
-        urlComponents.path = Constants.path + path
+        urlComponents.path = Constants.constants.path + path
         return urlComponents.url
     }
 

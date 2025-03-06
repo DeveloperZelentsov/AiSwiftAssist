@@ -8,7 +8,7 @@
 import Foundation
 
 /// Build assistants that can call models and use tools to perform tasks. [Link for Assistants](https://platform.openai.com/docs/api-reference/assistants)
-public protocol IAssistantsAPI: AnyObject {
+public protocol IAssistantsAPI: AnyObject, Sendable {
     
     /// Returns a list of assistants.
     /// - Parameter parameters: Parameters for the list of assistants.
@@ -66,19 +66,17 @@ public protocol IAssistantsAPI: AnyObject {
     func listFiles(for assistantId: String, with parameters: ASAListAssistantsParameters?) async throws -> ASAAssistantFilesListResponse
 }
 
-public final class AssistantsAPI: HTTPClient, IAssistantsAPI {
+public actor AssistantsAPI: HTTPClient, IAssistantsAPI {
 
     let urlSession: URLSession
 
-    public init(apiKey: String,
-                baseScheme: String = Constants.baseScheme,
-                baseHost: String = Constants.baseHost,
-                path: String = Constants.path,
-                urlSession: URLSession = .shared) {
-        Constants.apiKey = apiKey
-        Constants.baseScheme = baseScheme
-        Constants.baseHost = baseHost
-        Constants.path = path
+    public init(
+        config: AISwiftAssistConfig,
+        constants: AISwiftAssistConstants = .default,
+        urlSession: URLSession = .shared
+    ) {
+        Constants.config = config
+        Constants.constants = constants
         self.urlSession = urlSession
     }
 

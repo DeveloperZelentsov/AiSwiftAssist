@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents a file attached to a message.
-public struct ASAMessageFile: Codable {
+public struct ASAMessageFile: Codable, Sendable {
     /// The identifier of the file, which can be referenced in API endpoints.
     public let id: String
 

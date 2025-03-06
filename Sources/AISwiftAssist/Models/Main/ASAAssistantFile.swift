@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents an assistant file that can be used by the assistant.
-public struct ASAAssistantFile: Codable {
+public struct ASAAssistantFile: Codable, Sendable {
     /// The identifier of the assistant file.
     public let id: String
 

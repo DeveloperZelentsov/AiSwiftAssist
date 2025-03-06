@@ -8,7 +8,7 @@
 import Foundation
 
 /// Parameters for listing run steps in a thread.
-public struct ASAListRunStepsParameters: Codable {
+public struct ASAListRunStepsParameters: Codable, Sendable {
     /// A limit on the number of objects to be returned.
     public let limit: Int?
 

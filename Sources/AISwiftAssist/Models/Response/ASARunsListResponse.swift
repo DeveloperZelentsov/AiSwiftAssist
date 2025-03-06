@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents a response containing a list of runs.
-public struct ASARunsListResponse: Codable {
+public struct ASARunsListResponse: Codable, Sendable {
     /// The object type, which is always 'list'.
     public let object: String
 

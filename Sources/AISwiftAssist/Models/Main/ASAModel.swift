@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ASAModel: Codable {
+public struct ASAModel: Codable, Sendable {
     // The model identifier, which can be referenced in the API endpoints.
     public let id: String
 

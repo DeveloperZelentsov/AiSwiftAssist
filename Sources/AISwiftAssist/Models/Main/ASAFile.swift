@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents a document that has been uploaded to OpenAI.
-public struct ASAFile: Codable {
+public struct ASAFile: Codable, Sendable {
     /// The file identifier, which can be referenced in the API endpoints.
     public let id: String
 

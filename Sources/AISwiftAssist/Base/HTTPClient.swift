@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol HTTPClient: AnyObject {
+protocol HTTPClient: AnyObject, Sendable {
     func sendRequest<T: Decodable>(session: URLSession,
                                    endpoint: any Endpoint,
                                    responseModel: T.Type) async throws -> T
@@ -35,9 +35,9 @@ extension HTTPClient {
         request.httpMethod = endpoint.method.rawValue
         request.allHTTPHeaderFields = endpoint.header
         if request.allHTTPHeaderFields == nil {
-            request.allHTTPHeaderFields = ["Authorization": "Bearer \(Constants.apiKey)"]
+            request.allHTTPHeaderFields = ["Authorization": "Bearer \(Constants.config.apiKey)"]
         } else {
-            request.allHTTPHeaderFields?["Authorization"] = "Bearer \(Constants.apiKey)"
+            request.allHTTPHeaderFields?["Authorization"] = "Bearer \(Constants.config.apiKey)"
         }
         request.httpBody = endpoint.body?.data
 

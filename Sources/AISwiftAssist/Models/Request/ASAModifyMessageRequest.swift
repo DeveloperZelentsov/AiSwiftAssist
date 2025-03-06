@@ -8,7 +8,7 @@
 import Foundation
 
 /// A request structure for modifying a message in a thread.
-public struct ASAModifyMessageRequest: Codable {
+public struct ASAModifyMessageRequest: Codable, Sendable {
     
     /// Optional: Set of 16 key-value pairs that can be attached to the message.
     public let metadata: [String: String]?

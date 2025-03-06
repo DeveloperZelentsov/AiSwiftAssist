@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents a request to create an assistant file.
-public struct ASACreateAssistantFileRequest: Codable {
+public struct ASACreateAssistantFileRequest: Codable, Sendable {
     /// A File ID (with purpose="assistants") that the assistant should use.
     /// Useful for tools like retrieval and code_interpreter that can access files.
     public let fileId: String

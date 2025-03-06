@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ASAModelsListResponse: Codable {
+public struct ASAModelsListResponse: Codable, Sendable {
 
     /// The object type, which is always "list".
     public let object: String

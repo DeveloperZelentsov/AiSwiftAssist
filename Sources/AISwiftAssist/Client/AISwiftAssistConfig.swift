@@ -7,15 +7,18 @@
 
 import Foundation
 
-public struct AISwiftAssistConfig {
+public struct AISwiftAssistConfig: Sendable {
 
     public let apiKey: String
     public let organizationId: String?
 
-    public init(apiKey: String,
-                organizationId: String? = nil) {
+    public init(
+        apiKey: String,
+        organizationId: String? = nil
+    ) {
         self.apiKey = apiKey
         self.organizationId = organizationId
     }
 
+    public static let empty: AISwiftAssistConfig = .init(apiKey: "")
 }

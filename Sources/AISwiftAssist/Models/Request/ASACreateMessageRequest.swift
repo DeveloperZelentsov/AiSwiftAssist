@@ -8,7 +8,7 @@
 import Foundation
 
 /// A request structure for creating a message in a thread.
-public struct ASACreateMessageRequest: Codable {
+public struct ASACreateMessageRequest: Codable, Sendable {
 
     /// The role of the entity that is creating the message. Currently only 'user' is supported.
     public let role: String

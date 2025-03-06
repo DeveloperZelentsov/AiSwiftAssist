@@ -8,7 +8,7 @@
 import Foundation
 
 /// Create messages within threads [Link for Messages](https://platform.openai.com/docs/api-reference/messages)
-public protocol IMessagesAPI: AnyObject {
+public protocol IMessagesAPI: AnyObject, Sendable {
 
     /// Create a message.
     /// - Parameters:
@@ -56,19 +56,17 @@ public protocol IMessagesAPI: AnyObject {
     func listFiles(by threadId: String, messageId: String, parameters: ASAListMessagesParameters?) async throws -> ASAMessageFilesListResponse
 }
 
-public final class MessagesAPI: HTTPClient, IMessagesAPI {
+public actor MessagesAPI: HTTPClient, IMessagesAPI {
 
     let urlSession: URLSession
 
-    public init(apiKey: String,
-                baseScheme: String = Constants.baseScheme,
-                baseHost: String = Constants.baseHost,
-                path: String = Constants.path,
-                urlSession: URLSession = .shared) {
-        Constants.apiKey = apiKey
-        Constants.baseScheme = baseScheme
-        Constants.baseHost = baseHost
-        Constants.path = path
+    public init(
+        config: AISwiftAssistConfig,
+        constants: AISwiftAssistConstants = .default,
+        urlSession: URLSession = .shared
+    ) {
+        Constants.config = config
+        Constants.constants = constants
         self.urlSession = urlSession
     }
 
