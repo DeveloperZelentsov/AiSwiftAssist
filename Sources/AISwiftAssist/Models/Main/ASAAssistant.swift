@@ -9,6 +9,7 @@ import Foundation
 
 /// Represents an assistant capable of calling the model and utilizing tools.
 public struct ASAAssistant: Codable, Sendable {
+    
     /// Unique identifier of the assistant (used in API endpoints).
     public let id: String
 
@@ -30,9 +31,6 @@ public struct ASAAssistant: Codable, Sendable {
     /// Optional: System instructions used by the assistant (max 256000 characters).
     public let instructions: String?
 
-    /// Optional: Effort level for model reasoning (low, medium, high).
-    public let reasoningEffort: String?
-
     /// Tools available to the assistant (max 128).
     public let tools: [Tool]
 
@@ -52,24 +50,76 @@ public struct ASAAssistant: Codable, Sendable {
     /// Optional: Metadata (up to 16 key-value pairs).
     public let metadata: [String: String]?
 
-    public enum CodingKeys: String, CodingKey {
-        case id
-        case objectType = "object"
-        case createdAt = "created_at"
-        case name, description, model, instructions, tools, metadata
-        case reasoningEffort = "reasoning_effort"
-        case toolResources = "tool_resources"
-        case temperature
-        case topP = "top_p"
-        case responseFormat = "response_format"
+    enum CodingKeys: String, CodingKey {
+        case id, objectType = "object", createdAt = "created_at"
+        case name, description, model, instructions, tools, metadata, temperature, topP = "top_p", responseFormat = "response_format", toolResources = "tool_resources"
     }
 
-    // MARK: - Nested Types
+    public init(
+        id: String,
+        objectType: String,
+        createdAt: Int,
+        name: String?,
+        description: String?,
+        model: String,
+        instructions: String?,
+        tools: [Tool],
+        toolResources: ToolResources?,
+        temperature: Double?,
+        topP: Double?,
+        responseFormat: ResponseFormat?,
+        metadata: [String : String]?
+    ) {
+        self.id = id
+        self.objectType = objectType
+        self.createdAt = createdAt
+        self.name = name
+        self.description = description
+        self.model = model
+        self.instructions = instructions
+        self.tools = tools
+        self.toolResources = toolResources
+        self.temperature = temperature
+        self.topP = topP
+        self.responseFormat = responseFormat
+        self.metadata = metadata
+    }
 
     /// Tool available to the assistant.
     public struct Tool: Codable, Sendable {
-        /// Type of the tool.
         public let type: ToolType
+        public let function: FunctionTool?
+        public let fileSearch: FileSearchTool?
+
+        enum CodingKeys: String, CodingKey {
+            case type, function, fileSearch = "file_search"
+        }
+
+        public struct FunctionTool: Codable, Sendable {
+            public let name: String
+            public let description: String?
+            public let parameters: [String: AnyCodable]?
+            public let strict: Bool?
+        }
+
+        public struct FileSearchTool: Codable, Sendable {
+            public let maxNumResults: Int?
+            public let rankingOptions: RankingOptions?
+
+            enum CodingKeys: String, CodingKey {
+                case maxNumResults = "max_num_results"
+                case rankingOptions = "ranking_options"
+            }
+
+            public struct RankingOptions: Codable, Sendable {
+                public let ranker: String?
+                public let scoreThreshold: Double?
+
+                enum CodingKeys: String, CodingKey {
+                    case ranker, scoreThreshold = "score_threshold"
+                }
+            }
+        }
     }
 
     /// Supported types of tools.
@@ -108,44 +158,61 @@ public struct ASAAssistant: Codable, Sendable {
             case vectorStoreIds = "vector_store_ids"
             case vectorStores = "vector_stores"
         }
-    }
 
-    /// Vector store for file searches.
-    public struct VectorStore: Codable, Sendable {
-        public let fileIds: [String]?
-        public let chunkingStrategy: ChunkingStrategy?
+        /// Vector store for file searches.
+        public struct VectorStore: Codable, Sendable {
+            public let fileIds: [String]?
+            public let chunkingStrategy: ChunkingStrategy?
 
-        enum CodingKeys: String, CodingKey {
-            case fileIds = "file_ids"
-            case chunkingStrategy = "chunking_strategy"
+            enum CodingKeys: String, CodingKey {
+                case fileIds = "file_ids"
+                case chunkingStrategy = "chunking_strategy"
+            }
+
+            /// Strategy for chunking files.
+            public struct ChunkingStrategy: Codable, Sendable {
+                public let type: ChunkingType
+                public let staticChunking: StaticChunking?
+
+                public enum ChunkingType: String, Codable, Sendable {
+                    case auto
+                    case `static`
+                }
+
+                enum CodingKeys: String, CodingKey {
+                    case type
+                    case staticChunking = "static"
+                }
+
+                /// Parameters for static file chunking.
+                public struct StaticChunking: Codable, Sendable {
+                    public let maxChunkSizeTokens: Int
+                    public let chunkOverlapTokens: Int
+
+                    enum CodingKeys: String, CodingKey {
+                        case maxChunkSizeTokens = "max_chunk_size_tokens"
+                        case chunkOverlapTokens = "chunk_overlap_tokens"
+                    }
+                }
+            }
         }
     }
 
-    /// Strategy for chunking files.
-    public struct ChunkingStrategy: Codable, Sendable {
-        public let type: String // always "static" when explicitly set
-        public let `static`: StaticChunking?
+    public struct JSONSchema: Codable, Sendable {
+        public let name: String
+        public let description: String?
+        public let schema: [String: AnyCodable]?
+        public let strict: Bool?
     }
 
-    /// Parameters for static file chunking.
-    public struct StaticChunking: Codable, Sendable {
-        public let maxChunkSizeTokens: Int
-        public let chunkOverlapTokens: Int
-
-        enum CodingKeys: String, CodingKey {
-            case maxChunkSizeTokens = "max_chunk_size_tokens"
-            case chunkOverlapTokens = "chunk_overlap_tokens"
-        }
-    }
-
-    /// Specifies the response format from the model. Useful to enforce JSON outputs or plain text.
     public enum ResponseFormat: Codable, Sendable {
         case auto
         case text
         case jsonObject
+        case jsonSchema(JSONSchema)
 
-        public enum CodingKeys: String, CodingKey {
-            case type
+        enum CodingKeys: String, CodingKey {
+            case type, jsonSchema = "json_schema"
         }
 
         public init(from decoder: Decoder) throws {
@@ -155,7 +222,11 @@ public struct ASAAssistant: Codable, Sendable {
             case "auto": self = .auto
             case "text": self = .text
             case "json_object": self = .jsonObject
-            default: self = .auto
+            case "json_schema":
+                let schema = try container.decode(JSONSchema.self, forKey: .jsonSchema)
+                self = .jsonSchema(schema)
+            default:
+                self = .auto
             }
         }
 
@@ -165,6 +236,9 @@ public struct ASAAssistant: Codable, Sendable {
             case .auto: try container.encode("auto", forKey: .type)
             case .text: try container.encode("text", forKey: .type)
             case .jsonObject: try container.encode("json_object", forKey: .type)
+            case .jsonSchema(let schema):
+                try container.encode("json_schema", forKey: .type)
+                try container.encode(schema, forKey: .jsonSchema)
             }
         }
     }
@@ -173,15 +247,14 @@ public struct ASAAssistant: Codable, Sendable {
 extension ASAAssistant {
     // MARK: - Mock Data
 
-    static let assistantSimple = ASAAssistant(
-        id: "simple",
+    static let assistantMinimal: Self = .init(
+        id: "asst_minimal_001",
         objectType: "assistant",
-        createdAt: 0,
+        createdAt: Int(Date().timeIntervalSince1970),
         name: nil,
         description: nil,
         model: "gpt-4",
         instructions: nil,
-        reasoningEffort: nil,
         tools: [],
         toolResources: nil,
         temperature: nil,
@@ -190,71 +263,83 @@ extension ASAAssistant {
         metadata: nil
     )
 
-    static let assistantPartial = ASAAssistant(
-        id: "partial",
+    /// Средняя конфигурация с основными полями.
+    static let assistantMedium: Self = .init(
+        id: "asst_medium_001",
         objectType: "assistant",
-        createdAt: 0,
-        name: "Partial Assistant",
-        description: nil,
-        model: "gpt-4",
-        instructions: "Some instructions",
-        reasoningEffort: "medium",
-        tools: [Tool(
-            type: .codeInterpreter
-        )],
-        toolResources: nil,
-        temperature: 0.8,
-        topP: nil,
-        responseFormat: .text,
-        metadata: ["env": "test"]
+        createdAt: Int(Date().timeIntervalSince1970),
+        name: "Medium Assistant",
+        description: "Assistant with moderate complexity",
+        model: "gpt-4-turbo",
+        instructions: "Answer general queries.",
+        tools: [
+            Tool(type: .codeInterpreter, function: nil, fileSearch: nil)
+        ],
+        toolResources: ToolResources(
+            codeInterpreter: CodeInterpreterResources(fileIds: ["file_123"]),
+            fileSearch: nil
+        ),
+        temperature: 0.7,
+        topP: 0.9,
+        responseFormat: .auto,
+        metadata: ["env": "staging"]
     )
 
-    static let assistantFull = ASAAssistant(
-        id: "full",
+    /// Полная конфигурация с максимальным набором полей.
+    static let assistantFull: Self = .init(
+        id: "asst_full_001",
         objectType: "assistant",
-        createdAt: 0,
+        createdAt: Int(Date().timeIntervalSince1970),
         name: "Full Assistant",
-        description: "Fully populated assistant",
-        model: "gpt-4",
-        instructions: "Detailed instructions",
-        reasoningEffort: "high",
-        tools: [Tool(
-            type: .fileSearch
-        )],
+        description: "Fully configured assistant for advanced tasks",
+        model: "gpt-4o",
+        instructions: "You are a comprehensive assistant handling complex tasks and queries.",
+        tools: [
+            Tool(
+                type: .function,
+                function: Tool.FunctionTool(
+                    name: "calculate",
+                    description: "Performs basic arithmetic calculations.",
+                    parameters: ["operation": AnyCodable("add"), "values": AnyCodable([1, 2])],
+                    strict: true
+                ),
+                fileSearch: nil
+            ),
+            Tool(
+                type: .fileSearch,
+                function: nil,
+                fileSearch: Tool.FileSearchTool(
+                    maxNumResults: 10,
+                    rankingOptions: Tool.FileSearchTool.RankingOptions(
+                        ranker: "auto",
+                        scoreThreshold: 0.8
+                    )
+                )
+            ),
+            Tool(
+                type: .codeInterpreter,
+                function: nil,
+                fileSearch: nil
+            )
+        ],
         toolResources: ToolResources(
-            codeInterpreter: nil,
+            codeInterpreter: CodeInterpreterResources(
+                fileIds: ["file_456", "file_789"]
+            ),
             fileSearch: FileSearchResources(
-                vectorStoreIds: ["vs1"],
+                vectorStoreIds: ["vector_store_1"],
                 vectorStores: nil
             )
         ),
         temperature: 0.5,
-        topP: 0.9,
+        topP: 0.85,
         responseFormat: .jsonObject,
-        metadata: ["version": "1.0"]
+        metadata: ["version": "1.0", "env": "production"]
     )
 
-    static let assistantCustom = ASAAssistant(
-        id: "custom",
-        objectType: "assistant",
-        createdAt: 0,
-        name: "Custom Assistant",
-        description: "Custom settings assistant",
-        model: "gpt-3.5",
-        instructions: "Custom instructions",
-        reasoningEffort: "low",
-        tools: [],
-        toolResources: nil,
-        temperature: 1.0,
-        topP: 0.5,
-        responseFormat: .auto,
-        metadata: nil
-    )
-
-    static let mocks: [ASAAssistant] = [
-        assistantSimple,
-        assistantPartial,
-        assistantFull,
-        assistantCustom
+    static let mocks: [Self] = [
+        assistantMinimal,
+        assistantMedium,
+        assistantFull
     ]
 }

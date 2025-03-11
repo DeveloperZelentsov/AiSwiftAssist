@@ -9,67 +9,85 @@ import Foundation
 
 /// Represents an execution run on a thread.
 public struct ASARun: Codable, Sendable {
-    /// The identifier of the run, which can be referenced in API endpoints.
+    /// Unique identifier of the run.
     public let id: String
 
-    /// The object type, which is always 'thread.run'.
+    /// Object type, always "thread.run".
     public let object: String
 
-    /// The Unix timestamp (in seconds) for when the run was created.
+    /// Unix timestamp (in seconds) when the run was created.
     public let createdAt: Int
 
-    /// The ID of the thread that was executed on as a part of this run.
+    /// ID of the thread associated with this run.
     public let threadId: String
 
-    /// The ID of the assistant used for execution of this run.
+    /// ID of the assistant executing this run.
     public let assistantId: String
 
-    /// The status of the run, which can be either queued, in_progress, requires_action, cancelling, cancelled, failed, completed, or expired.
-    public let status: String
+    /// Current status of the run (queued, in_progress, requires_action, cancelling, cancelled, failed, completed, incomplete, expired).
+    public let status: Status
 
-    /// Details on the action required to continue the run. Will be null if no action is required.
+    /// Details of actions required to continue the run (if applicable).
     public let requiredAction: RequiredAction?
 
-    /// The last error associated with this run. Will be null if there are no errors.
+    /// Last error encountered during the run (if applicable).
     public let lastError: LastError?
 
-    /// The Unix timestamp (in seconds) for when the run will expire.
+    /// Unix timestamp (in seconds) when the run expires.
     public let expiresAt: Int?
 
-    /// The Unix timestamp (in seconds) for when the run was started. Null if not started.
+    /// Unix timestamp (in seconds) when the run was started.
     public let startedAt: Int?
 
-    /// The Unix timestamp (in seconds) for when the run was cancelled. Null if not cancelled.
+    /// Unix timestamp (in seconds) when the run was cancelled.
     public let cancelledAt: Int?
 
-    /// The Unix timestamp (in seconds) for when the run failed. Null if not failed.
+    /// Unix timestamp (in seconds) when the run failed.
     public let failedAt: Int?
 
-    /// The Unix timestamp (in seconds) for when the run was completed. Null if not completed.
+    /// Unix timestamp (in seconds) when the run was completed.
     public let completedAt: Int?
 
-    /// The model that the assistant used for this run.
+    /// Model used for this run.
     public let model: String
 
-    /// The instructions that the assistant used for this run.
+    /// Instructions provided to the assistant.
     public let instructions: String?
 
-    /// The list of tools that the assistant used for this run.
-    /// Tools can be of types code_interpreter, retrieval, or function.
+    /// Tools enabled for the run.
     public let tools: [Tool]
 
-    /// The list of File IDs the assistant used for this run.
-    public let fileIds: [String]
-
-    /// Set of 16 key-value pairs that can be attached to the run. Useful for storing additional information.
+    /// Metadata associated with the run.
     public let metadata: [String: String]?
 
-    /// Represents the required action details for the run to continue.
+    /// Usage statistics for the run (if applicable).
+    public let usage: Usage?
+
+    enum CodingKeys: String, CodingKey {
+        case id, object, status, model, instructions, tools, metadata, usage
+        case createdAt = "created_at"
+        case threadId = "thread_id"
+        case assistantId = "assistant_id"
+        case requiredAction = "required_action"
+        case lastError = "last_error"
+        case expiresAt = "expires_at"
+        case startedAt = "started_at"
+        case cancelledAt = "cancelled_at"
+        case failedAt = "failed_at"
+        case completedAt = "completed_at"
+    }
+
+    /// Possible statuses of the run.
+    public enum Status: String, Codable, Sendable {
+        case queued, inProgress = "in_progress", requiresAction = "requires_action", cancelling, cancelled, failed, completed, incomplete, expired
+    }
+
+    /// Represents the action required to continue the run.
     public struct RequiredAction: Codable, Sendable {
-        /// For now, this is always 'submit_tool_outputs'.
+        /// Action type, currently always "submit_tool_outputs".
         public let type: String
 
-        /// Details on the tool outputs needed for this run to continue.
+        /// Details of required tool outputs.
         public let submitToolOutputs: SubmitToolOutputs
 
         enum CodingKeys: String, CodingKey {
@@ -77,62 +95,65 @@ public struct ASARun: Codable, Sendable {
             case submitToolOutputs = "submit_tool_outputs"
         }
 
-        /// Represents the tool outputs needed for this run to continue.
         public struct SubmitToolOutputs: Codable, Sendable {
-            /// A list of the relevant tool calls.
+            /// Relevant tool calls for the action.
             public let toolCalls: [ToolCall]
 
-            /// Represents a single tool call.
+            enum CodingKeys: String, CodingKey {
+                case toolCalls = "tool_calls"
+            }
+
             public struct ToolCall: Codable, Sendable {
-                /// The ID of the tool call.
+                /// ID of the tool call.
                 public let id: String
 
-                /// The type of tool call the output is required for. For now, this is always 'function'.
+                /// Type of tool call, currently always "function".
                 public let type: String
 
-                /// The function definition.
+                /// Function details for the tool call.
                 public let function: Function
 
-                /// Represents the function definition.
                 public struct Function: Codable, Sendable {
-                    /// The name of the function.
+                    /// Name of the function.
                     public let name: String
 
-                    /// The arguments that the model expects you to pass to the function.
+                    /// Arguments for the function.
                     public let arguments: String
                 }
             }
         }
     }
 
+    /// Represents the last error encountered during the run.
     public struct LastError: Codable, Sendable {
-        /// One of 'server_error' or 'rate_limit_exceeded'.
+        /// Error code (server_error, rate_limit_exceeded, invalid_prompt).
         public let code: String
 
-        /// A human-readable description of the error.
+        /// Human-readable description of the error.
         public let message: String
     }
 
-    /// Represents a tool enabled on the assistant.
+    /// Represents a tool used during the run.
     public struct Tool: Codable, Sendable {
-        /// The type of the tool (e.g., code_interpreter, retrieval, function).
+        /// Type of tool (e.g., "code_interpreter", "file_search", "function").
         public let type: String
     }
 
-    enum CodingKeys: String, CodingKey {
-        case id, object
-        case createdAt = "created_at"
-        case threadId = "thread_id"
-        case assistantId = "assistant_id"
-        case status, requiredAction = "required_action"
-        case lastError = "last_error"
-        case expiresAt = "expires_at"
-        case startedAt = "started_at"
-        case cancelledAt = "cancelled_at"
-        case failedAt = "failed_at"
-        case completedAt = "completed_at"
-        case model, instructions, tools
-        case fileIds = "file_ids"
-        case metadata
+    /// Usage statistics for the run.
+    public struct Usage: Codable, Sendable {
+        /// Number of completion tokens used.
+        public let completionTokens: Int
+
+        /// Number of prompt tokens used.
+        public let promptTokens: Int
+
+        /// Total number of tokens used.
+        public let totalTokens: Int
+
+        enum CodingKeys: String, CodingKey {
+            case completionTokens = "completion_tokens"
+            case promptTokens = "prompt_tokens"
+            case totalTokens = "total_tokens"
+        }
     }
 }

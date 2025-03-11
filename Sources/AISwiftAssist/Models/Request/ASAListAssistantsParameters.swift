@@ -22,7 +22,12 @@ public struct ASAListAssistantsParameters: Encodable, Sendable {
     /// Optional: A cursor for use in pagination. 'before' is an object ID that defines your place in the list, to fetch the previous page of the list.
     public let before: String?
 
-    public init(limit: Int? = nil, order: String? = nil, after: String? = nil, before: String? = nil) {
+    public init(
+        limit: Int? = nil,
+        order: String? = nil,
+        after: String? = nil,
+        before: String? = nil
+    ) {
         self.limit = limit
         self.order = order
         self.after = after

@@ -36,34 +36,7 @@ public protocol IAssistantsAPI: AnyObject, Sendable {
     /// - Parameter assistantId: The ID of the assistant to delete.
     /// - Returns: Deletion status
     func delete(by assistantId: String) async throws -> ASADeleteModelResponse
-    
-    /// Create an assistant file by attaching a File to an assistant.
-    /// - Parameters:
-    ///   - assistantId: The ID of the assistant for which to create a File.
-    ///   - request: The request object containing the File ID.
-    /// - Returns: An assistant file object.
-    func createFile(for assistantId: String, with request: ASACreateAssistantFileRequest) async throws -> ASAAssistantFile
 
-    /// Retrieves an assistant file.
-    /// - Parameters:
-    ///   - assistantId: The ID of the assistant who the file belongs to.
-    ///   - fileId: The ID of the file to retrieve.
-    /// - Returns: The assistant file object matching the specified ID.
-    func retrieveFile(for assistantId: String, fileId: String) async throws -> ASAAssistantFile
-
-    /// Delete an assistant file.
-    /// - Parameters:
-    ///   - assistantId: The ID of the assistant that the file belongs to.
-    ///   - fileId: The ID of the file to delete.
-    /// - Returns: Deletion status.
-    func deleteFile(for assistantId: String, fileId: String) async throws -> ASADeleteModelResponse
-
-    /// Returns a list of assistant files.
-    /// - Parameters:
-    ///   - assistantId: The ID of the assistant the file belongs to.
-    ///   - parameters: Parameters for the list of assistant files.
-    /// - Returns: A list of assistant file objects.
-    func listFiles(for assistantId: String, with parameters: ASAListAssistantsParameters?) async throws -> ASAAssistantFilesListResponse
 }
 
 public actor AssistantsAPI: HTTPClient, IAssistantsAPI {
@@ -107,26 +80,6 @@ public actor AssistantsAPI: HTTPClient, IAssistantsAPI {
     public func delete(by assistantId: String) async throws -> ASADeleteModelResponse {
         let endpoint = AssistantEndpoint.deleteAssistant(assistantId)
         return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASADeleteModelResponse.self)
-    }
-    
-    public func createFile(for assistantId: String, with request: ASACreateAssistantFileRequest) async throws -> ASAAssistantFile {
-        let endpoint = AssistantEndpoint.createFile(assistantId, request)
-        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAAssistantFile.self)
-    }
-
-    public func retrieveFile(for assistantId: String, fileId: String) async throws -> ASAAssistantFile {
-        let endpoint = AssistantEndpoint.retrieveFile(assistantId, fileId)
-        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAAssistantFile.self)
-    }
-
-    public func deleteFile(for assistantId: String, fileId: String) async throws -> ASADeleteModelResponse {
-        let endpoint = AssistantEndpoint.deleteFile(assistantId, fileId)
-        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASADeleteModelResponse.self)
-    }
-
-    public func listFiles(for assistantId: String, with parameters: ASAListAssistantsParameters? = nil) async throws -> ASAAssistantFilesListResponse {
-        let endpoint = AssistantEndpoint.listFiles(assistantId, parameters)
-        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAAssistantFilesListResponse.self)
     }
 }
 

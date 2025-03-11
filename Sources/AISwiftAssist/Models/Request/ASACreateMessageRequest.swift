@@ -7,31 +7,31 @@
 
 import Foundation
 
-/// A request structure for creating a message in a thread.
+/// Represents a request to create a message within a thread.
 public struct ASACreateMessageRequest: Codable, Sendable {
+    /// Role of the entity creating the message (user or assistant).
+    public let role: ASAMessage.Role
 
-    /// The role of the entity that is creating the message. Currently only 'user' is supported.
-    public let role: String
+    /// Content of the message (text, image URLs, or image files).
+    public let content: [ASAMessage.Content]
 
-    /// The content of the message.
-    public let content: String
+    /// Optional attachments associated with the message.
+    public let attachments: [ASAMessage.Attachment]?
 
-    /// Optional: A list of File IDs that the message should use. A maximum of 10 files can be attached to a message.
-    public let fileIds: [String]?
-
-    /// Optional: Set of 16 key-value pairs that can be attached to the message. Useful for storing additional information.
+    /// Optional metadata (max 16 key-value pairs).
     public let metadata: [String: String]?
 
     enum CodingKeys: String, CodingKey {
-        case role, content
-        case fileIds = "file_ids"
-        case metadata
+        case role, content, attachments, metadata
     }
 
-    public init(role: String, content: String, fileIds: [String]? = nil, metadata: [String : String]? = nil) {
+    public init(role: ASAMessage.Role,
+                content: [ASAMessage.Content],
+                attachments: [ASAMessage.Attachment]? = nil,
+                metadata: [String: String]? = nil) {
         self.role = role
         self.content = content
-        self.fileIds = fileIds
+        self.attachments = attachments
         self.metadata = metadata
     }
 }

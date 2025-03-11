@@ -15,38 +15,64 @@ public struct ASAMessage: Codable, Sendable {
     /// Object type, always "thread.message".
     public let object: String
 
-    /// Unix timestamp of message creation (in seconds).
+    /// Unix timestamp (in seconds) when the message was created.
     public let createdAt: Int
-
-    /// Role of the entity creating the message (user, assistant).
-    public let role: Role
-
-    /// Message content (text, images, etc.).
-    public let content: [Content]
 
     /// ID of the thread this message belongs to.
     public let threadId: String
 
-    /// Optional: ID of the assistant that authored this message.
+    /// The status of the message (in_progress, incomplete, completed).
+    public let status: Status
+
+    /// Details about why the message is incomplete (if applicable).
+    public let incompleteDetails: IncompleteDetails?
+
+    /// Unix timestamp (in seconds) when the message was completed.
+    public let completedAt: Int?
+
+    /// Unix timestamp (in seconds) when the message was marked incomplete.
+    public let incompleteAt: Int?
+
+    /// Role of the entity that produced the message (user or assistant).
+    public let role: Role
+
+    /// Content of the message (array of text and/or images).
+    public let content: [Content]
+
+    /// ID of the assistant that authored this message (if applicable).
     public let assistantId: String?
 
-    /// Optional: ID of the run associated with this message.
+    /// ID of the run associated with the creation of this message.
     public let runId: String?
 
-    /// Optional: Attachments (files linked to specific tools).
+    /// Attachments (files attached to the message and their tools).
     public let attachments: [Attachment]?
 
-    /// Optional: Metadata (up to 16 key-value pairs).
+    /// Metadata (max 16 key-value pairs).
     public let metadata: [String: String]?
 
     enum CodingKeys: String, CodingKey {
-        case id, object
+        case id, object, status, role, content, attachments, metadata
         case createdAt = "created_at"
         case threadId = "thread_id"
-        case role, content
+        case incompleteDetails = "incomplete_details"
+        case completedAt = "completed_at"
+        case incompleteAt = "incomplete_at"
         case assistantId = "assistant_id"
         case runId = "run_id"
-        case attachments, metadata
+    }
+
+    /// Status of the message.
+    public enum Status: String, Codable, Sendable {
+        case inProgress = "in_progress"
+        case incomplete
+        case completed
+    }
+
+    /// Details about why the message is incomplete.
+    public struct IncompleteDetails: Codable, Sendable {
+        /// Reason the message is incomplete.
+        public let reason: String
     }
 
     /// Role type of the message sender.
@@ -55,7 +81,7 @@ public struct ASAMessage: Codable, Sendable {
         case assistant
     }
 
-    /// Content of the message (text, image URL, or image file).
+    /// Content of the message.
     public enum Content: Codable, Sendable {
         case text(TextContent)
         case imageFile(ImageFileContent)
@@ -71,14 +97,11 @@ public struct ASAMessage: Codable, Sendable {
 
             switch type {
             case "text":
-                let textContent = try container.decode(TextContent.self, forKey: .text)
-                self = .text(textContent)
+                self = .text(try container.decode(TextContent.self, forKey: .text))
             case "image_file":
-                let imageFileContent = try container.decode(ImageFileContent.self, forKey: .imageFile)
-                self = .imageFile(imageFileContent)
+                self = .imageFile(try container.decode(ImageFileContent.self, forKey: .imageFile))
             case "image_url":
-                let imageUrlContent = try container.decode(ImageURLContent.self, forKey: .imageUrl)
-                self = .imageUrl(imageUrlContent)
+                self = .imageUrl(try container.decode(ImageURLContent.self, forKey: .imageUrl))
             default:
                 throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown content type")
             }
@@ -100,34 +123,37 @@ public struct ASAMessage: Codable, Sendable {
         }
     }
 
-    /// Represents text content in the message.
+    /// Represents text content.
     public struct TextContent: Codable, Sendable {
         public let value: String
         public let annotations: [Annotation]?
     }
 
-    /// Represents an image file in the message.
+    /// Represents an image file content.
     public struct ImageFileContent: Codable, Sendable {
         public let fileId: String
+        public let detail: String?
 
         enum CodingKeys: String, CodingKey {
             case fileId = "file_id"
+            case detail
         }
     }
 
-    /// Represents an image URL in the message.
+    /// Represents an image URL content.
     public struct ImageURLContent: Codable, Sendable {
-        public let url: String
+        public let url: URL
+        public let detail: String?
     }
 
-    /// Annotation details within text.
+    /// Annotation details within text content.
     public struct Annotation: Codable, Sendable {
         public let type: String
         public let text: String
         public let startIndex: Int
         public let endIndex: Int
-        public let fileCitation: ASAFileCitation?
-        public let filePath: ASAFilePath?
+        public let fileCitation: FileCitation?
+        public let filePath: FilePath?
 
         enum CodingKeys: String, CodingKey {
             case type, text
@@ -138,7 +164,8 @@ public struct ASAMessage: Codable, Sendable {
         }
     }
 
-    public struct ASAFileCitation: Codable, Sendable {
+    /// Citation pointing to a specific file quote.
+    public struct FileCitation: Codable, Sendable {
         public let fileId: String
         public let quote: String
 
@@ -148,7 +175,8 @@ public struct ASAMessage: Codable, Sendable {
         }
     }
 
-    public struct ASAFilePath: Codable, Sendable {
+    /// URL for the file generated by the assistant.
+    public struct FilePath: Codable, Sendable {
         public let fileId: String
 
         enum CodingKeys: String, CodingKey {
@@ -156,7 +184,7 @@ public struct ASAMessage: Codable, Sendable {
         }
     }
 
-    /// Message attachment specifying associated tools.
+    /// Represents a file attachment.
     public struct Attachment: Codable, Sendable {
         public let fileId: String
         public let tools: [ToolType]
@@ -167,49 +195,9 @@ public struct ASAMessage: Codable, Sendable {
         }
     }
 
+    /// Type of tool associated with an attachment.
     public enum ToolType: String, Codable, Sendable {
         case codeInterpreter = "code_interpreter"
         case fileSearch = "file_search"
     }
-}
-
-// MARK: - Mock Data
-extension ASAMessage {
-
-
-    static let mockSimple = ASAMessage(
-        id: "simple",
-        object: "thread.message",
-        createdAt: 1700000000,
-        role: .user,
-        content: [],
-        threadId: "thread_1",
-        assistantId: nil,
-        runId: nil,
-        attachments: nil,
-        metadata: nil
-    )
-
-    static let mockPartial = ASAMessage(
-        id: "partial",
-        object: "thread.message",
-        createdAt: 1700000100,
-        role: .assistant,
-        content: [.text(
-            .init(
-                value: "Hello",
-                annotations: nil
-            )
-        )],
-        threadId: "thread_2",
-        assistantId: "asst_123",
-        runId: nil,
-        attachments: nil,
-        metadata: ["env":"test"]
-    )
-
-    static let mocks: [ASAMessage] = [
-        mockSimple,
-        mockPartial
-    ]
 }

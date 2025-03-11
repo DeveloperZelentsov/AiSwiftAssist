@@ -65,8 +65,29 @@ extension AssistantEndpoint: CustomEndpoint {
     }
 
     public var header: [String : String]? {
-        let headers: [String: String] = ["OpenAI-Beta": Constants.constants.version.rawValue,
+        var headers: [String: String] = ["OpenAI-Beta": Constants.constants.version.rawValue,
                                          "Content-Type": "application/json"]
+
+        switch self {
+        case .getAssistants:
+            headers["ForTest"] = "getAssistants"
+        case .createAssistant:
+            headers["ForTest"] = "createAssistant"
+        case .retrieveAssistant:
+            headers["ForTest"] = "retrieveAssistant"
+        case .modifyAssistant:
+            headers["ForTest"] = "modifyAssistant"
+        case .deleteAssistant:
+            headers["ForTest"] = "deleteAssistant"
+        case .createFile:
+            headers["ForTest"] = "createFile"
+        case .retrieveFile:
+            headers["ForTest"] = "retrieveFile"
+        case .deleteFile:
+            headers["ForTest"] = "deleteFile"
+        case .listFiles:
+            headers["ForTest"] = "listFiles"
+        }
         return headers
     }
 

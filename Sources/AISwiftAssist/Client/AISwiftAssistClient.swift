@@ -9,11 +9,11 @@ import Foundation
 
 public actor AISwiftAssistClient: Sendable {
 
-    public let assistantsApi: IAssistantsAPI
-    public let messagesApi: IMessagesAPI
-    public let modelsApi: IModelsAPI
-    public let runsApi: IRunsAPI
-    public let threadsApi: IThreadsAPI
+    public nonisolated let assistantsApi: any IAssistantsAPI
+    public nonisolated let messagesApi: any IMessagesAPI
+    public nonisolated let modelsApi: any IModelsAPI
+    public nonisolated let runsApi: any IRunsAPI
+    public nonisolated let threadsApi: any IThreadsAPI
 
     public init(
         config: AISwiftAssistConfig,
@@ -30,27 +30,27 @@ public actor AISwiftAssistClient: Sendable {
     }
 
 }
-
-extension AISwiftAssistClient {
-    /// Creates an assistant and thread based on the provided parameters.
-    public func createAssistantAndThread(with params: AssistantCreationParams) async throws -> AssistantAndThreadConfig {
-        let modelsResponse = try await modelsApi.get()
-        guard let model = modelsResponse.data.first(where: { $0.id == params.model.rawValue }) else {
-            throw NSError(domain: "AISwiftAssistClient", code: 0, userInfo: [NSLocalizedDescriptionKey: "Model not found"])
-        }
-
-        let createAssistantRequest = ASACreateAssistantRequest(asaModel: model,
-                                                               name: params.name,
-                                                               description: params.description,
-                                                               instructions: params.instructions,
-                                                               tools: params.tools,
-                                                               fileIds: params.fileIds,
-                                                               metadata: params.metadata)
-        let assistant = try await assistantsApi.create(by: createAssistantRequest)
-
-        let threadRequest = ASACreateThreadRequest(messages: nil)
-        let thread = try await threadsApi.create(by: threadRequest)
-
-        return AssistantAndThreadConfig(assistant: assistant, thread: thread)
-    }
-}
+//
+//extension AISwiftAssistClient {
+//    /// Creates an assistant and thread based on the provided parameters.
+//    public func createAssistantAndThread(with params: AssistantCreationParams) async throws -> AssistantAndThreadConfig {
+//        let modelsResponse = try await modelsApi.get()
+//        guard let model = modelsResponse.data.first(where: { $0.id == params.model.rawValue }) else {
+//            throw NSError(domain: "AISwiftAssistClient", code: 0, userInfo: [NSLocalizedDescriptionKey: "Model not found"])
+//        }
+//
+//        let createAssistantRequest = ASACreateAssistantRequest(asaModel: model,
+//                                                               name: params.name,
+//                                                               description: params.description,
+//                                                               instructions: params.instructions,
+//                                                               tools: params.tools,
+//                                                               fileIds: params.fileIds,
+//                                                               metadata: params.metadata)
+//        let assistant = try await assistantsApi.create(by: createAssistantRequest)
+//
+//        let threadRequest = ASACreateThreadRequest(messages: nil)
+//        let thread = try await threadsApi.create(by: threadRequest)
+//
+//        return AssistantAndThreadConfig(assistant: assistant, thread: thread)
+//    }
+//}
