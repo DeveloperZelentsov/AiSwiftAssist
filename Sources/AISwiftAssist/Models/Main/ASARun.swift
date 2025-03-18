@@ -9,145 +9,176 @@ import Foundation
 
 /// Represents an execution run on a thread.
 public struct ASARun: Codable, Sendable {
-    /// Unique identifier of the run.
+
+    /// The identifier, which can be referenced in API endpoints.
     public let id: String
 
-    /// Object type, always "thread.run".
+    /// The object type, always `thread.run`.
     public let object: String
 
-    /// Unix timestamp (in seconds) when the run was created.
+    /// The Unix timestamp (in seconds) when the run was created.
     public let createdAt: Int
 
-    /// ID of the thread associated with this run.
+    /// The ID of the thread that was executed as part of this run.
     public let threadId: String
 
-    /// ID of the assistant executing this run.
+    /// The ID of the assistant used for execution of this run.
     public let assistantId: String
 
-    /// Current status of the run (queued, in_progress, requires_action, cancelling, cancelled, failed, completed, incomplete, expired).
+    /// The status of the run.
     public let status: Status
 
-    /// Details of actions required to continue the run (if applicable).
+    /// Details on the action required to continue the run. Null if no action is required.
     public let requiredAction: RequiredAction?
 
-    /// Last error encountered during the run (if applicable).
+    /// The last error associated with this run. Null if there are no errors.
     public let lastError: LastError?
 
-    /// Unix timestamp (in seconds) when the run expires.
+    /// The Unix timestamp (in seconds) when the run will expire.
     public let expiresAt: Int?
 
-    /// Unix timestamp (in seconds) when the run was started.
+    /// The Unix timestamp (in seconds) when the run started.
     public let startedAt: Int?
 
-    /// Unix timestamp (in seconds) when the run was cancelled.
+    /// The Unix timestamp (in seconds) when the run was cancelled.
     public let cancelledAt: Int?
 
-    /// Unix timestamp (in seconds) when the run failed.
+    /// The Unix timestamp (in seconds) when the run failed.
     public let failedAt: Int?
 
-    /// Unix timestamp (in seconds) when the run was completed.
+    /// The Unix timestamp (in seconds) when the run was completed.
     public let completedAt: Int?
 
-    /// Model used for this run.
+    /// The model used by the assistant for this run.
     public let model: String
 
-    /// Instructions provided to the assistant.
+    /// Instructions used by the assistant for this run.
     public let instructions: String?
 
-    /// Tools enabled for the run.
+    /// Tools used by the assistant for this run.
     public let tools: [Tool]
 
-    /// Metadata associated with the run.
+    /// Set of key-value pairs with additional information about the object.
     public let metadata: [String: String]?
 
-    /// Usage statistics for the run (if applicable).
+    /// Usage statistics related to the run. Null if the run is not in a terminal state.
     public let usage: Usage?
 
-    enum CodingKeys: String, CodingKey {
-        case id, object, status, model, instructions, tools, metadata, usage
-        case createdAt = "created_at"
-        case threadId = "thread_id"
-        case assistantId = "assistant_id"
-        case requiredAction = "required_action"
-        case lastError = "last_error"
-        case expiresAt = "expires_at"
-        case startedAt = "started_at"
-        case cancelledAt = "cancelled_at"
-        case failedAt = "failed_at"
-        case completedAt = "completed_at"
-    }
+    /// The sampling temperature used for this run. Defaults to 1 if not set.
+    public let temperature: Double?
 
-    /// Possible statuses of the run.
+    /// The nucleus sampling value used for this run. Defaults to 1 if not set.
+    public let topP: Double?
+
+    /// Maximum number of completion tokens allowed for this run.
+    public let maxCompletionTokens: Int?
+
+    /// Maximum number of prompt tokens allowed for this run.
+    public let maxPromptTokens: Int?
+
+    /// Controls how a thread will be truncated prior to the run.
+    public let truncationStrategy: TruncationStrategy?
+
+    /// Specifies the format that the model must output.
+    public let responseFormat: ResponseFormat?
+
+    /// Controls which (if any) tool is called by the model.
+    public let toolChoice: ToolChoice?
+
+    /// Enables parallel function calling during tool use.
+    public let parallelToolCalls: Bool?
+
+    /// Details on why the run is incomplete. Null if the run is not incomplete.
+    public let incompleteDetails: IncompleteDetails?
+
     public enum Status: String, Codable, Sendable {
-        case queued, inProgress = "in_progress", requiresAction = "requires_action", cancelling, cancelled, failed, completed, incomplete, expired
+        case queued
+        case inProgress = "in_progress"
+        case requiresAction = "requires_action"
+        case cancelling
+        case cancelled
+        case failed
+        case completed
+        case incomplete
+        case expired
     }
 
-    /// Represents the action required to continue the run.
     public struct RequiredAction: Codable, Sendable {
-        /// Action type, currently always "submit_tool_outputs".
         public let type: String
-
-        /// Details of required tool outputs.
         public let submitToolOutputs: SubmitToolOutputs
+
+        public struct SubmitToolOutputs: Codable, Sendable {
+            public let toolCalls: [ToolCall]
+
+            public struct ToolCall: Codable, Sendable {
+                public let id: String
+                public let type: String
+                public let function: Function
+
+                public struct Function: Codable, Sendable {
+                    public let name: String
+                    public let arguments: String
+                }
+            }
+
+            enum CodingKeys: String, CodingKey {
+                case toolCalls = "tool_calls"
+            }
+        }
 
         enum CodingKeys: String, CodingKey {
             case type
             case submitToolOutputs = "submit_tool_outputs"
         }
+    }
 
-        public struct SubmitToolOutputs: Codable, Sendable {
-            /// Relevant tool calls for the action.
-            public let toolCalls: [ToolCall]
+    public struct LastError: Codable, Sendable {
+        public let code: String
+        public let message: String
+    }
 
-            enum CodingKeys: String, CodingKey {
-                case toolCalls = "tool_calls"
+    public struct Tool: Codable, Sendable {
+        public let type: ToolType
+        public let function: FunctionTool?
+        public let fileSearch: FileSearchTool?
+
+        public enum ToolType: String, Codable, Sendable {
+            case codeInterpreter = "code_interpreter"
+            case fileSearch = "file_search"
+            case function
+        }
+
+        public struct FunctionTool: Codable, Sendable {
+            public let name: String
+            public let description: String?
+            public let parameters: [String: AnyCodable]?
+            public let strict: Bool?
+        }
+
+        public struct FileSearchTool: Codable, Sendable {
+            public let maxNumResults: Int?
+            public let rankingOptions: RankingOptions?
+
+            public struct RankingOptions: Codable, Sendable {
+                public let ranker: String?
+                public let scoreThreshold: Double?
+
+                enum CodingKeys: String, CodingKey {
+                    case ranker
+                    case scoreThreshold = "score_threshold"
+                }
             }
 
-            public struct ToolCall: Codable, Sendable {
-                /// ID of the tool call.
-                public let id: String
-
-                /// Type of tool call, currently always "function".
-                public let type: String
-
-                /// Function details for the tool call.
-                public let function: Function
-
-                public struct Function: Codable, Sendable {
-                    /// Name of the function.
-                    public let name: String
-
-                    /// Arguments for the function.
-                    public let arguments: String
-                }
+            enum CodingKeys: String, CodingKey {
+                case maxNumResults = "max_num_results"
+                case rankingOptions = "ranking_options"
             }
         }
     }
 
-    /// Represents the last error encountered during the run.
-    public struct LastError: Codable, Sendable {
-        /// Error code (server_error, rate_limit_exceeded, invalid_prompt).
-        public let code: String
-
-        /// Human-readable description of the error.
-        public let message: String
-    }
-
-    /// Represents a tool used during the run.
-    public struct Tool: Codable, Sendable {
-        /// Type of tool (e.g., "code_interpreter", "file_search", "function").
-        public let type: String
-    }
-
-    /// Usage statistics for the run.
     public struct Usage: Codable, Sendable {
-        /// Number of completion tokens used.
         public let completionTokens: Int
-
-        /// Number of prompt tokens used.
         public let promptTokens: Int
-
-        /// Total number of tokens used.
         public let totalTokens: Int
 
         enum CodingKeys: String, CodingKey {
@@ -155,5 +186,92 @@ public struct ASARun: Codable, Sendable {
             case promptTokens = "prompt_tokens"
             case totalTokens = "total_tokens"
         }
+    }
+
+    public struct TruncationStrategy: Codable, Sendable {
+        public let type: String
+        public let lastMessages: Int?
+
+        enum CodingKeys: String, CodingKey {
+            case type
+            case lastMessages = "last_messages"
+        }
+    }
+
+    public enum ResponseFormat: Codable, Sendable {
+        case auto
+        case text
+        case jsonObject
+        case jsonSchema(JSONSchema)
+
+        public struct JSONSchema: Codable, Sendable {
+            public let name: String
+            public let description: String?
+            public let schema: [String: AnyCodable]?
+            public let strict: Bool?
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case type
+            case jsonSchema = "json_schema"
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let type = try container.decode(String.self, forKey: .type)
+            switch type {
+            case "auto": self = .auto
+            case "text": self = .text
+            case "json_object": self = .jsonObject
+            case "json_schema":
+                let schema = try container.decode(JSONSchema.self, forKey: .jsonSchema)
+                self = .jsonSchema(schema)
+            default:
+                self = .auto
+            }
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            switch self {
+            case .auto: try container.encode("auto", forKey: .type)
+            case .text: try container.encode("text", forKey: .type)
+            case .jsonObject: try container.encode("json_object", forKey: .type)
+            case .jsonSchema(let schema):
+                try container.encode("json_schema", forKey: .type)
+                try container.encode(schema, forKey: .jsonSchema)
+            }
+        }
+    }
+
+    public enum ToolChoice: Codable, Sendable {
+        case none
+        case auto
+        case required
+        case specificTool(SpecificTool)
+
+        public struct SpecificTool: Codable, Sendable {
+            public let type: String
+            public let function: SpecificFunction?
+
+            public struct SpecificFunction: Codable, Sendable {
+                public let name: String
+            }
+        }
+    }
+
+    public struct IncompleteDetails: Codable, Sendable {
+        public let reason: String
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, object, createdAt = "created_at", threadId = "thread_id", assistantId = "assistant_id",
+             status, requiredAction = "required_action", lastError = "last_error",
+             expiresAt = "expires_at", startedAt = "started_at", cancelledAt = "cancelled_at",
+             failedAt = "failed_at", completedAt = "completed_at", model, instructions, tools, metadata,
+             usage, temperature, topP = "top_p", maxCompletionTokens = "max_completion_tokens",
+             maxPromptTokens = "max_prompt_tokens", truncationStrategy = "truncation_strategy",
+             responseFormat = "response_format", toolChoice = "tool_choice",
+             parallelToolCalls = "parallel_tool_calls", incompleteDetails = "incomplete_details"
     }
 }
