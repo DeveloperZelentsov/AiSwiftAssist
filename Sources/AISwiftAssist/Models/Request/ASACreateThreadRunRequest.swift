@@ -8,7 +8,7 @@
 import Foundation
 
 /// A request structure for creating a thread and run.
-public struct ASACreateThreadRunRequest: Codable {
+public struct ASACreateThreadRunRequest: Codable, Sendable {
     /// The ID of the assistant to use to execute this run.
     public let assistantId: String
 
@@ -16,12 +16,12 @@ public struct ASACreateThreadRunRequest: Codable {
     public let thread: Thread
 
     /// Represents a thread containing messages and other parameters.
-    public struct Thread: Codable {
+    public struct Thread: Codable, Sendable {
         /// The messages to be processed in this thread.
         public let messages: [Message]
 
         /// Represents a single message in a thread.
-        public struct Message: Codable {
+        public struct Message: Codable, Sendable {
             /// The role of the message sender, e.g., 'user' or 'system'.
             public let role: String
 

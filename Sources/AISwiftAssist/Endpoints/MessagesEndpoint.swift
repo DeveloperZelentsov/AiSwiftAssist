@@ -20,7 +20,7 @@ extension MessagesEndpoint: CustomEndpoint {
     public var url: URL? {
         var urlComponents: URLComponents = .default
         urlComponents.queryItems = queryItems
-        urlComponents.path = Constants.path + path
+        urlComponents.path = Constants.constants.path + path
         return urlComponents.url
     }
 
@@ -64,7 +64,7 @@ extension MessagesEndpoint: CustomEndpoint {
     }
 
     public var header: [String : String]? {
-        let headers: [String: String] = ["OpenAI-Beta": "assistants=v1",
+        let headers: [String: String] = ["OpenAI-Beta": Constants.constants.version.rawValue,
                                          "Content-Type": "application/json"]
         return headers
     }

@@ -8,7 +8,14 @@
 import Foundation
 
 /// Create messages within threads [Link for Messages](https://platform.openai.com/docs/api-reference/messages)
-public protocol IMessagesAPI: AnyObject {
+public protocol IMessagesAPI: AnyObject, Sendable {
+
+    /// Returns a list of messages for a given thread.
+    /// - Parameters:
+    ///   - threadId: The ID of the thread the messages belong to.
+    ///   - parameters: Parameters for the list of messages.
+    /// - Returns: A list of message objects.
+    func getMessages(by threadId: String, parameters: ASAListMessagesParameters?) async throws -> ASAMessagesListResponse
 
     /// Create a message.
     /// - Parameters:
@@ -31,49 +38,30 @@ public protocol IMessagesAPI: AnyObject {
     ///   - modifyMessage: Object with parameters for modifying a message.
     /// - Returns: The modified message object.
     func modify(by threadId: String, messageId: String, modifyMessage: ASAModifyMessageRequest) async throws -> ASAMessage
-    
-    /// Returns a list of messages for a given thread.
-    /// - Parameters:
-    ///   - threadId: The ID of the thread the messages belong to.
-    ///   - parameters: Parameters for the list of messages.
-    /// - Returns: A list of message objects.
-    func getMessages(by threadId: String, parameters: ASAListMessagesParameters?) async throws -> ASAMessagesListResponse
 
-    /// Retrieves a file associated with a message.
-    /// - Parameters:
-    ///   - threadId: The ID of the thread to which the message and file belong.
-    ///   - messageId: The ID of the message the file belongs to.
-    ///   - fileId: The ID of the file being retrieved.
-    /// - Returns: The message file object.
-    func retrieveFile(by threadId: String, messageId: String, fileId: String) async throws -> ASAMessageFile
-
-    /// Returns a list of files associated with a message.
-    /// - Parameters:
-    ///   - threadId: The ID of the thread that the message and files belong to.
-    ///   - messageId: The ID of the message that the files belong to.
-    ///   - parameters: Optional parameters for pagination and sorting.
-    /// - Returns: A list of message file objects.
-    func listFiles(by threadId: String, messageId: String, parameters: ASAListMessagesParameters?) async throws -> ASAMessageFilesListResponse
 }
 
-public final class MessagesAPI: HTTPClient, IMessagesAPI {
+public actor MessagesAPI: HTTPClient, IMessagesAPI {
 
     let urlSession: URLSession
 
-    public init(apiKey: String,
-                baseScheme: String = Constants.baseScheme,
-                baseHost: String = Constants.baseHost,
-                path: String = Constants.path,
-                urlSession: URLSession = .shared) {
-        Constants.apiKey = apiKey
-        Constants.baseScheme = baseScheme
-        Constants.baseHost = baseHost
-        Constants.path = path
+    public init(
+        config: AISwiftAssistConfig,
+        constants: AISwiftAssistConstants = .default,
+        urlSession: URLSession = .shared
+    ) {
+        Constants.config = config
+        Constants.constants = constants
         self.urlSession = urlSession
     }
 
     public init(urlSession: URLSession = .shared) {
         self.urlSession = urlSession
+    }
+
+    public func getMessages(by threadId: String, parameters: ASAListMessagesParameters?) async throws -> ASAMessagesListResponse {
+        let endpoint = MessagesEndpoint.listMessages(threadId, parameters)
+        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAMessagesListResponse.self)
     }
 
     public func create(by threadId: String, createMessage: ASACreateMessageRequest) async throws -> ASAMessage {
@@ -91,18 +79,4 @@ public final class MessagesAPI: HTTPClient, IMessagesAPI {
         return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAMessage.self)
     }
 
-    public func getMessages(by threadId: String, parameters: ASAListMessagesParameters?) async throws -> ASAMessagesListResponse {
-        let endpoint = MessagesEndpoint.listMessages(threadId, parameters)
-        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAMessagesListResponse.self)
-    }
-
-    public func retrieveFile(by threadId: String, messageId: String, fileId: String) async throws -> ASAMessageFile {
-        let endpoint = MessagesEndpoint.retrieveFile(threadId, messageId, fileId)
-        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAMessageFile.self)
-    }
-
-    public func listFiles(by threadId: String, messageId: String, parameters: ASAListMessagesParameters?) async throws -> ASAMessageFilesListResponse {
-        let endpoint = MessagesEndpoint.listFiles(threadId, messageId, parameters)
-        return try await sendRequest(session: urlSession, endpoint: endpoint, responseModel: ASAMessageFilesListResponse.self)
-    }
 }

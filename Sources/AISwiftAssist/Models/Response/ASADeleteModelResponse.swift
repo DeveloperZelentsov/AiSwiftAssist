@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ASADeleteModelResponse: Codable {
+public struct ASADeleteModelResponse: Codable, Sendable {
     /// The model identifier, which can be referenced in the API endpoints.
     public let id: String
 

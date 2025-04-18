@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents various models created and used by OpenAI and its partners.
-public enum ASAOpenAIModel: String {
+public enum ASAOpenAIModel: String, Sendable {
 
     /// Model "text-search-babbage-doc-001" created by openai-dev, a document search model based on the Babbage architecture.
     case textSearchBabbageDoc001 = "text-search-babbage-doc-001"
@@ -186,5 +186,117 @@ public enum ASAOpenAIModel: String {
 
     /// Model "dall-e-3" created by system, an advanced version of the DALL-E image generation model.
     case dallE3 = "dall-e-3"
-}
 
+    // MARK: - Additional Models
+
+    /// Model "gpt-4.5-preview" created by system.
+    case gpt4_5Preview = "gpt-4.5-preview"
+
+    /// Model "gpt-4.5-preview-2025-02-27" created by system.
+    case gpt4_5Preview2025_02_27 = "gpt-4.5-preview-2025-02-27"
+
+    /// Model "gpt-4o-mini-audio-preview-2024-12-17" created by system.
+    case gpt4oMiniAudioPreview2024_12_17 = "gpt-4o-mini-audio-preview-2024-12-17"
+
+    /// Model "gpt-4o-audio-preview-2024-10-01" created by system.
+    case gpt4oAudioPreview2024_10_01 = "gpt-4o-audio-preview-2024-10-01"
+
+    /// Model "gpt-4o-audio-preview" created by system.
+    case gpt4oAudioPreview = "gpt-4o-audio-preview"
+
+    /// Model "gpt-4o-mini-realtime-preview-2024-12-17" created by system.
+    case gpt4oMiniRealtimePreview2024_12_17 = "gpt-4o-mini-realtime-preview-2024-12-17"
+
+    /// Model "gpt-4o-mini-realtime-preview" created by system.
+    case gpt4oMiniRealtimePreview = "gpt-4o-mini-realtime-preview"
+
+    /// Model "o1-mini-2024-09-12" created by system.
+    case o1Mini2024_09_12 = "o1-mini-2024-09-12"
+
+    /// Model "o1-mini" created by system.
+    case o1Mini = "o1-mini"
+
+    /// Model "gpt-4o-mini-audio-preview" created by system.
+    case gpt4oMiniAudioPreview = "gpt-4o-mini-audio-preview"
+
+    /// Model "whisper-1" created by openai-internal.
+    case whisper1 = "whisper-1"
+
+    /// Model "omni-moderation-latest" created by system.
+    case omniModerationLatest = "omni-moderation-latest"
+
+    /// Model "gpt-4o-2024-05-13" created by system.
+    case gpt4o2024_05_13 = "gpt-4o-2024-05-13"
+
+    /// Model "omni-moderation-2024-09-26" created by system.
+    case omniModeration2024_09_26 = "omni-moderation-2024-09-26"
+
+    /// Model "gpt-4o-realtime-preview-2024-10-01" created by system.
+    case gpt4oRealtimePreview2024_10_01 = "gpt-4o-realtime-preview-2024-10-01"
+
+    /// Model "gpt-4o-2024-08-06" created by system.
+    case gpt4o2024_08_06 = "gpt-4o-2024-08-06"
+
+    /// Model "chatgpt-4o-latest" created by system.
+    case chatgpt4oLatest = "chatgpt-4o-latest"
+
+    /// Model "tts-1-hd-1106" created by system.
+    case tts1Hd1106 = "tts-1-hd-1106"
+
+    /// Model "text-embedding-3-large" created by system.
+    case textEmbedding3Large = "text-embedding-3-large"
+
+    /// Model "gpt-4o-audio-preview-2024-12-17" created by system.
+    case gpt4oAudioPreview2024_12_17 = "gpt-4o-audio-preview-2024-12-17"
+
+    /// Model "gpt-4o" created by system.
+    case gpt4o = "gpt-4o"
+
+    /// Model "o1" created by system.
+    case o1 = "o1"
+
+    /// Model "gpt-4" created by openai.
+    case gpt4 = "gpt-4"
+
+    /// Model "gpt-4o-2024-11-20" created by system.
+    case gpt4o2024_11_20 = "gpt-4o-2024-11-20"
+
+    /// Model "o1-2024-12-17" created by system.
+    case o1_2024_12_17 = "o1-2024-12-17"
+
+    /// Model "o1-preview" created by system.
+    case o1Preview = "o1-preview"
+
+    /// Model "o1-preview-2024-09-12" created by system.
+    case o1Preview2024_09_12 = "o1-preview-2024-09-12"
+
+    /// Model "gpt-4o-mini-2024-07-18" created by system.
+    case gpt4oMini2024_07_18 = "gpt-4o-mini-2024-07-18"
+
+    /// Model "gpt-4o-mini" created by system.
+    case gpt4oMini = "gpt-4o-mini"
+
+    /// Model "gpt-4-turbo" created by system.
+    case gpt4Turbo = "gpt-4-turbo"
+
+    /// Model "o3-mini-2025-01-31" created by system.
+    case o3Mini2025_01_31 = "o3-mini-2025-01-31"
+
+    /// Model "gpt-3.5-turbo-0125" created by system.
+    case gpt3_5Turbo0125 = "gpt-3.5-turbo-0125"
+
+    /// Model "gpt-4o-realtime-preview-2024-12-17" created by system.
+    case gpt4oRealtimePreview2024_12_17 = "gpt-4o-realtime-preview-2024-12-17"
+
+    /// Model "text-embedding-3-small" created by system.
+    case textEmbedding3Small = "text-embedding-3-small"
+
+    /// Model "gpt-4-0125-preview" created by system.
+    case gpt4_0125Preview = "gpt-4-0125-preview"
+
+    /// Model "gpt-4-turbo-preview" created by system.
+    case gpt4TurboPreview = "gpt-4-turbo-preview"
+
+    /// Model "o3-mini" created by system.
+    case o3Mini = "o3-mini"
+}

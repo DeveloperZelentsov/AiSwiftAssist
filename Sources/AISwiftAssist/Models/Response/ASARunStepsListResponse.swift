@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents a response containing a list of run steps.
-public struct ASARunStepsListResponse: Codable {
+public struct ASARunStepsListResponse: Codable, Sendable {
     /// The object type, which is always 'list'.
     public let object: String
 

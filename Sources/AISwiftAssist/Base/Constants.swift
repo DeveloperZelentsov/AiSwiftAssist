@@ -7,10 +7,7 @@
 
 import Foundation
 
-public enum Constants {
-    public static var baseScheme: String = "https"
-    public static var baseHost: String = "api.openai.com"
-    public static var path: String = "/v1/"
-    public static var apiKey: String = ""
-    public static var organizationId: String?
+public enum Constants: Sendable {
+    nonisolated(unsafe) public static var config: AISwiftAssistConfig = .empty
+    nonisolated(unsafe) public static var constants: AISwiftAssistConstants = .default
 }

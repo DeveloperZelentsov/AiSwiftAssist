@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -7,6 +7,7 @@ let package = Package(
     name: "AISwiftAssist",
     platforms: [
         .iOS(.v13),
+        .macOS(.v12),
         .watchOS(.v8)
     ],
     products: [
@@ -24,5 +25,6 @@ let package = Package(
             name: "AISwiftAssistTests",
             dependencies: ["AISwiftAssist"]
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v6]
 )

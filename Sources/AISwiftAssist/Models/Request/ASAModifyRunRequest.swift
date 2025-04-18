@@ -8,7 +8,7 @@
 import Foundation
 
 /// A request structure for modifying a run.
-public struct ASAModifyRunRequest: Codable {
+public struct ASAModifyRunRequest: Codable, Sendable {
     /// Optional: Set of 16 key-value pairs that can be attached to the run.
     public let metadata: [String: String]?
 

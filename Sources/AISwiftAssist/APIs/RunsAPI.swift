@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents an execution run on a thread. [Link for Runs](https://platform.openai.com/docs/api-reference/runs)
-public protocol IRunsAPI: AnyObject {
+public protocol IRunsAPI: AnyObject, Sendable {
     
     /// Create a run.
     /// - Parameters:
@@ -77,19 +77,17 @@ public protocol IRunsAPI: AnyObject {
     func listRunSteps(by threadId: String, runId: String, parameters: ASAListRunStepsParameters?) async throws -> ASARunStepsListResponse
 }
 
-public final class RunsAPI: HTTPClient, IRunsAPI {
+public actor RunsAPI: HTTPClient, IRunsAPI {
 
     let urlSession: URLSession
 
-    public init(apiKey: String,
-                baseScheme: String = Constants.baseScheme,
-                baseHost: String = Constants.baseHost,
-                path: String = Constants.path,
-                urlSession: URLSession = .shared) {
-        Constants.apiKey = apiKey
-        Constants.baseScheme = baseScheme
-        Constants.baseHost = baseHost
-        Constants.path = path
+    public init(
+        config: AISwiftAssistConfig,
+        constants: AISwiftAssistConstants = .default,
+        urlSession: URLSession = .shared
+    ) {
+        Constants.config = config
+        Constants.constants = constants
         self.urlSession = urlSession
     }
 

@@ -8,7 +8,7 @@
 import Foundation
 
 /// Represents a response containing a list of messages.
-public struct ASAMessagesListResponse: Codable {
+public struct ASAMessagesListResponse: Codable, Sendable {
     /// The object type, which is always 'list'.
     public let object: String
 

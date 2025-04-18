@@ -7,13 +7,13 @@
 
 import Foundation
 
-public struct ValidatorErrorResponse: Codable {
+public struct ValidatorErrorResponse: Codable, Sendable {
     public let code: Int
     public let desc: String
 }
 
 /// Types of HTTP Request Errors
-public enum HTTPRequestError: Error {
+public enum HTTPRequestError: Error, Sendable {
     /// Model decoding error
     case decode(String)
     /// URL validation error

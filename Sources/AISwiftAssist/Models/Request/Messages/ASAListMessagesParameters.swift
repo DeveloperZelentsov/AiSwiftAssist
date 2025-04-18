@@ -8,7 +8,7 @@
 import Foundation
 
 /// Parameters for listing messages in a thread.
-public struct ASAListMessagesParameters: Codable {
+public struct ASAListMessagesParameters: Codable, Sendable {
     
     /// Optional: A limit on the number of objects to be returned. Limit can range between 1 and 100.
     public let limit: Int?

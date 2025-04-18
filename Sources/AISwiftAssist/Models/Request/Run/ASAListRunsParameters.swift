@@ -8,7 +8,7 @@
 import Foundation
 
 /// Parameters for listing runs in a thread.
-public struct ASAListRunsParameters: Codable {
+public struct ASAListRunsParameters: Codable, Sendable {
     
     /// Optional: A limit on the number of objects to be returned.
     public let limit: Int?
